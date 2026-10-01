@@ -8,6 +8,7 @@ ENV SESSION_EXPIRY=900000
 ENV REFRESH_TOKEN_EXPIRY=604800000
 
 # Create necessary directories
+# Testing this change
 RUN mkdir -p /app/uploads/temp
 RUN mkdir -p /app/client/public/images/temp
 RUN mkdir -p /app/api/logs/
