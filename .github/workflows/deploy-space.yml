@@ -1,0 +1,50 @@
+# Deploys the space/ folder to the Hugging Face Space.
+# - On pull requests: only checks that librechat.yaml is valid YAML.
+# - On pushes to main: checks, then uploads space/ to the Space (which rebuilds it).
+name: Deploy to Hugging Face Space
+
+on:
+  pull_request:
+    paths: ["space/**", ".github/workflows/deploy-space.yml"]
+  push:
+    branches: [main]
+    paths: ["space/**", ".github/workflows/deploy-space.yml"]
+  workflow_dispatch:   # adds a "Run workflow" button in the Actions tab
+
+concurrency: deploy-space
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the repo files
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install tools
+        run: pip install pyyaml "huggingface_hub>=0.25"
+
+      - name: Check librechat.yaml is valid YAML
+        run: python -c "import yaml; yaml.safe_load(open('space/librechat.yaml')); print('librechat.yaml OK')"
+
+      - name: Upload space/ to Hugging Face
+        if: github.event_name != 'pull_request'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os
+          from huggingface_hub import upload_folder
+          upload_folder(
+              repo_id="nislip/SRNA-Study-Agent",
+              repo_type="space",
+              folder_path="space",
+              commit_message=f"Deploy from GitHub {os.environ['GITHUB_SHA'][:7]}",
+              token=os.environ["HF_TOKEN"],
+          )
+          print("Uploaded. The Space will now rebuild.")
+          PY
