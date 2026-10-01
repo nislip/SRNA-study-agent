@@ -1,10 +1,12 @@
-# Gibby - The SRNA AI
+# SugammaRex
 
 # Purpose
 
 This architecture serves as a study agent for SRNAs enrolled in Gonzaga University
 
-# Archi
+This is a test
+
+# Architecture
 
 # Repository Control Flow
 
@@ -57,6 +59,7 @@ gh pr create --base dev --head test --title "Promote test to dev" --body "Change
 ```
 
 git remote -v
+git branch -a
 
 ```
 

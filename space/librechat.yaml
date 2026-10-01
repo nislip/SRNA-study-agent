@@ -54,6 +54,34 @@ mcpServers:
     type: streamable-http
     url: https://pubmed.caseyjhand.com/mcp
 
+  # openFDA: FDA drug labels, adverse events, recalls, shortages, Orange Book, NDC.
+  # Runs inside the Space (stdio). Uses ONE shared openFDA key for everyone,
+  # stored as the Space secret OPENFDA_API_KEY (never put the key in this file).
+  openfda:
+    title: "openFDA"
+    description: "FDA drug labels, adverse event reports, recalls, shortages, and approvals"
+    type: stdio
+    command: npx
+    args:
+      - "-y"
+      - "@ythalorossy/openfda@2"
+    env:
+      OPENFDA_API_KEY: "${OPENFDA_API_KEY}"
+    timeout: 60000
+
+  # Medical calculators: 150+ validated clinical scores (ASA, RCRI, Mallampati,
+  # SOFA, CKD-EPI, and more), each citing its source paper. No API key needed.
+  # Installed by the Dockerfile; runs inside the Space.
+  medcalc:
+    title: "Medical Calculators"
+    description: "Validated clinical scores and formulas with literature citations"
+    type: stdio
+    command: sh
+    args:
+      - "-c"
+      - "cd /app/mcp-servers/medical-calc && exec .venv/bin/python -m src.main"
+    timeout: 60000
+
   # Google Drive OAuth test. Each user signs in with their own Google account.
   # Client ID and secret come from Hugging Face Space secrets.
   drive:

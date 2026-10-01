@@ -22,6 +22,21 @@ RUN chmod -R 777 /app/data
 # Use this Space's own librechat.yaml
 COPY librechat.yaml /app/librechat.yaml
 
+# --- Medical calculator MCP server (Python, runs inside the Space over stdio) ---
+# Source: https://github.com/u9401066/medical-calc-mcp (Apache-2.0). No API key needed.
+# Installed under /app so the build can write there and the running app can read it.
+ENV UV_PYTHON_INSTALL_DIR=/app/mcp-servers/.uv-python \
+    UV_CACHE_DIR=/app/mcp-servers/.uv-cache
+RUN command -v uv >/dev/null 2>&1 || (wget -qO- https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh)
+ADD https://github.com/u9401066/medical-calc-mcp/archive/refs/heads/main.tar.gz /tmp/medical-calc-mcp.tar.gz
+RUN mkdir -p /app/mcp-servers/medical-calc \
+&& tar -xzf /tmp/medical-calc-mcp.tar.gz -C /app/mcp-servers/medical-calc --strip-components=1 \
+&& rm /tmp/medical-calc-mcp.tar.gz \
+&& cd /app/mcp-servers/medical-calc \
+&& uv sync --frozen --no-dev \
+&& rm -rf /app/mcp-servers/.uv-cache \
+&& chmod -R a+rX /app/mcp-servers
+
 # Install dependencies
 RUN cd /app/api && npm install
 
