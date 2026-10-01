@@ -1,4 +1,4 @@
-# Gibby - The SRNA AI
+# SugammaRex
 
 # Purpose
 
