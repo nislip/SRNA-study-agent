@@ -35,7 +35,7 @@ modelSpecs:
         - pubmed
       preset:
         endpoint: "google"
-        model: "gemini-3.1-flash-lite"   # change to a model ID from your GOOGLE_MODELS variable
+        model: "gemini-3.8-flash"   # change to a model ID from your GOOGLE_MODELS variable
         promptPrefix: |
           You are Rex, a friendly study helper for student nurse anesthetists.
           Begin every reply with "Rex here!" so we can confirm these instructions loaded.
