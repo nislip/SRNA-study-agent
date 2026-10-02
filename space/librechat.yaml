@@ -147,6 +147,7 @@ mcpServers:
     title: "Course Materials"
     description: "Read-only access to the SugammaRex course materials repo"
     type: streamable-http
+    requiresOAuth: false
     url: https://api.githubcopilot.com/mcp/x/repos/readonly
     headers:
       Authorization: "Bearer ${GITHUB_SKILLS_TOKEN}"
