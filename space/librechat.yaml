@@ -37,6 +37,7 @@ modelSpecs:
         - pubmed
         - openfda
         - medcalc
+        - coursefiles
       preset:
         endpoint: "google"
         model: "gemini-3.1-flash-lite"   # change to a model ID from your GOOGLE_MODELS variable
