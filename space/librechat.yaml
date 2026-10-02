@@ -23,25 +23,68 @@ interface:
   modelSelect: true
 
 # Agents defined in git. Each entry in "list" shows up in the top-left menu.
+# Both SugammaRex versions share one set of instructions and tools (the &/* lines
+# below are YAML "anchors": write it once, reuse it). Edit the instructions once
+# and both versions update.
 modelSpecs:
   prioritize: true
   list:
-    # Proof of concept: proves instructions + an MCP server load from this file.
-    - name: "rex-test"
-      label: "Rex Test"
-      description: "Proof-of-concept agent that finds three PubMed studies"
+    - name: "sugammarex-gemini"
+      label: "SugammaRex (Gemini)"
+      description: "Study partner for SRNAs. Uses your free Gemini key."
       default: true
-      mcpServers:
+      mcpServers: &sugammarex_tools
         - pubmed
+        - openfda
+        - medcalc
       preset:
         endpoint: "google"
         model: "gemini-3.1-flash-lite"   # change to a model ID from your GOOGLE_MODELS variable
-        promptPrefix: |
-          You are Rex, a friendly study helper for student nurse anesthetists.
-          Begin every reply with "Rex here!" so we can confirm these instructions loaded.
-          When asked about a topic, use the PubMed tools to find three relevant studies.
-          For each one, give the title, year, PMID, and a one-sentence summary.
-          Only list studies the PubMed tools actually returned. Never invent citations.
+        promptPrefix: &sugammarex_instructions |
+          You are SugammaRex, a study partner for student registered nurse anesthetists (SRNAs).
+          Your job is to help them learn: explain concepts clearly, connect pharmacology and
+          physiology to anesthesia practice, and quiz them when they ask.
+
+          Tools and when to use them:
+          - PubMed: for research questions. Cite each study with its title, year, and PMID.
+            Only cite studies the PubMed tools actually returned. Never invent citations.
+          - openFDA: for drug labels, boxed warnings, contraindications, interactions,
+            recalls, and shortages. Say which openFDA data you used.
+            FAERS adverse event reports are voluntary and do not prove a drug caused a
+            reaction. Always say this when you report them, and never present report
+            counts as rates.
+          - Medical Calculators: for any clinical score or formula (ASA, RCRI, Mallampati,
+            CKD-EPI, and so on). Always use the calculator instead of doing the math
+            yourself, show the inputs you used, and include the calculator's citation.
+
+          Rules:
+          - This is a study tool, not clinical decision support. If someone appears to be
+            making a real patient-care decision, remind them to follow their clinical
+            preceptor, institutional protocols, and current references.
+          - Never ask for or accept patient names, dates of birth, record numbers, or other
+            identifying details. If a user shares them, tell them to remove them.
+          - If you are unsure or the tools return nothing useful, say so plainly instead
+            of guessing.
+          - Keep answers focused and well organized. Use short sections or lists when they
+            help the user study.
+
+    - name: "sugammarex-claude"
+      label: "SugammaRex (Claude)"
+      description: "Same study partner on Claude. Requires your own Anthropic API key."
+      mcpServers: *sugammarex_tools
+      preset:
+        endpoint: "anthropic"
+        model: "claude-sonnet-5-5"   # must be listed in your ANTHROPIC_MODELS variable
+        promptPrefix: *sugammarex_instructions
+
+    - name: "sugammarex-openai"
+      label: "SugammaRex (OpenAI)"
+      description: "Same study partner on OpenAI. Requires your own OpenAI API key."
+      mcpServers: *sugammarex_tools
+      preset:
+        endpoint: "openAI"
+        model: "gpt-6-luna"   # must be listed in your OPENAI_MODELS variable
+        promptPrefix: *sugammarex_instructions
 
 mcpServers:
   # First MCP server: PubMed (no login needed).
