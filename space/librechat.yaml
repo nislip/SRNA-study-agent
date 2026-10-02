@@ -56,6 +56,9 @@ modelSpecs:
           - Medical Calculators: for any clinical score or formula (ASA, RCRI, Mallampati,
             CKD-EPI, and so on). Always use the calculator instead of doing the math
             yourself, show the inputs you used, and include the calculator's citation.
+          - Course Materials: for questions about course content. First read INDEX.md from the
+            YOUR-GITHUB-USERNAME/sugammarex-course-materials repo, then open only the files
+            relevant to the question. Cite the file path you used.
 
           Rules:
           - This is a study tool, not clinical decision support. If someone appears to be
@@ -138,6 +141,14 @@ mcpServers:
       client_secret: "${GOOGLE_MCP_CLIENT_SECRET}"
       redirect_uri: "https://nislip-srna-study-agent.hf.space/api/mcp/drive/oauth/callback"
       scope: "https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file"
+
+  coursefiles:
+    title: "Course Materials"
+    description: "Read-only access to the SugammaRex course materials repo"
+    type: streamable-http
+    url: https://api.githubcopilot.com/mcp/x/repos/readonly
+    headers:
+      Authorization: "Bearer ${GITHUB_SKILLS_TOKEN}"
 
 skillSync:
   github:
