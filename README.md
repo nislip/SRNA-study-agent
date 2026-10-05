@@ -4,10 +4,6 @@
 
 This architecture serves as a study agent for SRNAs enrolled in Gonzaga University
 
-This is a test
-
-# Architecture
-
 # Repository Control Flow
 
 test > dev > main
