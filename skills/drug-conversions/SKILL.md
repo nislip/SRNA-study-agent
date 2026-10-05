@@ -22,11 +22,15 @@ Some drugs have one file per route, like `lidocaine-local` and `lidocaine-iv`, b
 - Labels describe approved dosing, which can differ from anesthesia practice or a program's teaching. When that gap is well known, mention it briefly and keep the label answer separate from the practice point.
 - If a section says it was truncated, or a needed section is listed as "not present on this label," say so and give the DailyMed link rather than filling the gap from memory.
 
+## Chemistry questions
+
+For chemical name, molecular formula, molecular weight, pH, or pKa, use the label's Description section. For active and inactive ingredients (preservatives, excipients such as sulfites or egg lecithin), use the "Ingredients and Composition" table.
+
 ## Conversions
 
 Show every step with units, so the person can check the work and learn the method.
 
-1. **Find the concentration** in the drug's "Dosage Forms and Strengths" section. If several are listed, ask which one, or show the math for the most common one and say which you chose.
+1. **Find the concentration** in the "Ingredients and Composition" table, which lists each product's exact strength (for example, 10 mg in 1 mL). The "Dosage Forms and Strengths" section describes the same products in words. If several strengths exist, ask which one, or show the math for the most common one and say which you chose. Note whether the strength is stated as the salt or the base (for example, "as hydrochloride"), since that changes the math.
 2. **Set up the calculation with units written out.** For example: 0.6 mg/kg × 80 kg = 48 mg, then 48 mg ÷ 10 mg/mL = 4.8 mL.
 3. **Infusions:** dose (mcg/kg/min) × weight (kg) × 60 min/hr ÷ concentration (mcg/mL) = rate (mL/hr). Convert mg/mL to mcg/mL first when needed.
 4. **Check units at every step,** especially mcg vs mg and per minute vs per hour. Most dosing errors happen there.
