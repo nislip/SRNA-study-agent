@@ -1,0 +1,240 @@
+{
+  "acetaminophen-iv": {
+    "setid": "dc42ab17-cd30-4d1a-e053-2995a90a86ea",
+    "spl_version": "5",
+    "published_date": "Sep 28, 2026",
+    "title": "ACETAMINOPHEN INJECTION, SOLUTION [HF ACQUISITION CO LLC, DBA HEALTHFIRST]",
+    "file": "acetaminophen-iv.md"
+  },
+  "bupivacaine": {
+    "setid": "4e0cff98-ad0e-494d-8316-b7cdfad6a876",
+    "spl_version": "7",
+    "published_date": "Sep 30, 2026",
+    "title": "BUPIVACAINE HYDROCHLORIDE INJECTION, SOLUTION [ANTHEA PHARMA PRIVATE LIMITED]",
+    "file": "bupivacaine.md"
+  },
+  "bupivacaine-spinal": {
+    "setid": "9679cc05-2f8a-4e88-53b5-6e9122c8b8c0",
+    "spl_version": "27",
+    "published_date": "Jun 24, 2026",
+    "title": "MARCAINE SPINAL (BUPIVACAINE HYDROCHLORIDE IN DEXTROSE) INJECTION, SOLUTION [HOSPIRA, INC.]",
+    "file": "bupivacaine-spinal.md"
+  },
+  "cisatracurium": {
+    "setid": "1c6a8b98-deac-4e25-b4a0-5d0af5090281",
+    "spl_version": "1",
+    "published_date": "Aug 17, 2026",
+    "title": "CISATRACURIUM BESYLATE INJECTION, SOLUTION [AVENACY, LLC]",
+    "file": "cisatracurium.md"
+  },
+  "dantrolene": {
+    "setid": "4df35098-8702-46be-ac67-30cfdf1aa570",
+    "spl_version": "15",
+    "published_date": "Apr 28, 2026",
+    "title": "DANTRIUM (DANTROLENE SODIUM) INJECTION [PAR HEALTH USA, LLC]",
+    "file": "dantrolene.md"
+  },
+  "dexamethasone-iv": {
+    "setid": "11f10a47-1c42-40e4-89d8-bb000fef497c",
+    "spl_version": "3",
+    "published_date": "Sep 10, 2026",
+    "title": "DEXAMETHASONE SODIUM PHOSPHATE INJECTION, SOLUTION [REMEDYREPACK INC.]",
+    "file": "dexamethasone-iv.md"
+  },
+  "dexmedetomidine": {
+    "setid": "0d2710f2-ee47-4114-ab5c-8dca74cdcb8d",
+    "spl_version": "15",
+    "published_date": "Sep 30, 2026",
+    "title": "DEXMEDETOMIDINE INJECTION, SOLUTION, CONCENTRATE DEXMEDETOMIDINE IN DEXTROSE (DEXMEDETOMIDINE) INJECTION [WG CRITICAL CARE, LLC]",
+    "file": "dexmedetomidine.md"
+  },
+  "ephedrine": {
+    "setid": "9851cc1c-f267-4e18-b1ad-923fe9cded84",
+    "spl_version": "2",
+    "published_date": "Sep 14, 2026",
+    "title": "EPHEDRINE SULFATE INJECTION [REMEDYREPACK INC.]",
+    "file": "ephedrine.md"
+  },
+  "esmolol": {
+    "setid": "60b10020-f802-4fef-a487-0f11eca246c5",
+    "spl_version": "11",
+    "published_date": "Sep 23, 2026",
+    "title": "ESMOLOL HYDROCHLORIDE IN WATER (ESMOLOL HYDROCHLORIDE) INJECTION [WG CRITICAL CARE, LLC]",
+    "file": "esmolol.md"
+  },
+  "etomidate": {
+    "setid": "b7ed5bf8-ba75-44dc-8f81-96b4ad5766be",
+    "spl_version": "27",
+    "published_date": "May 25, 2026",
+    "title": "AMIDATE (ETOMIDATE) INJECTION, SOLUTION [HOSPIRA, INC.]",
+    "file": "etomidate.md"
+  },
+  "fentanyl-iv": {
+    "setid": "bfa8018a-4cbc-434b-e09e-782872b0340a",
+    "spl_version": "35",
+    "published_date": "Aug 25, 2026",
+    "title": "FENTANYL CITRATE INJECTION, SOLUTION [HOSPIRA, INC.]",
+    "file": "fentanyl-iv.md"
+  },
+  "flumazenil": {
+    "setid": "56452ba8-521d-1f84-e063-6294a90af6fc",
+    "spl_version": "1",
+    "published_date": "Jul 13, 2026",
+    "title": "FLUMAZENIL INJECTION, SOLUTION [HF ACQUISITION CO LLC, DBA HEALTHFIRST]",
+    "file": "flumazenil.md"
+  },
+  "glycopyrrolate-iv": {
+    "setid": "4ecb3435-58e5-46cb-b8c2-85b5fd955f83",
+    "spl_version": "3",
+    "published_date": "Sep 11, 2026",
+    "title": "GLYCOPYRROLATE INJECTION, SOLUTION [HENRY SCHEIN, INC.]",
+    "file": "glycopyrrolate-iv.md"
+  },
+  "hydromorphone-iv": {
+    "setid": "9eebd88a-5632-460f-b7b6-26c8a180540d",
+    "spl_version": "6",
+    "published_date": "Aug 31, 2026",
+    "title": "DILAUDID (HYDROMORPHONE HYDROCHLORIDE) INJECTION, SOLUTION [FRESENIUS KABI USA, LLC]",
+    "file": "hydromorphone-iv.md"
+  },
+  "ketamine": {
+    "setid": "f8b01c77-620d-4734-a771-b8524b65bcca",
+    "spl_version": "7",
+    "published_date": "Oct 02, 2026",
+    "title": "KETAMINE HYDROCHLORIDE INJECTION [EUGIA US LLC]",
+    "file": "ketamine.md"
+  },
+  "ketorolac-iv": {
+    "setid": "7a7c8579-d423-4699-9435-69c4d127c654",
+    "spl_version": "3",
+    "published_date": "Sep 30, 2026",
+    "title": "KETOROLAC TROMETHAMINE INJECTION, SOLUTION KETROLAC TROMETHAMINE (KETOROLAC TROMETHAMINE) INJECTION, SOLUTION [ANTHEA PHARMA PRIVATE LIMITED]",
+    "file": "ketorolac-iv.md"
+  },
+  "labetalol-iv": {
+    "setid": "abfc6b75-1ed5-41f1-0484-4597488237bc",
+    "spl_version": "30",
+    "published_date": "Sep 24, 2026",
+    "title": "LABETALOL HYDROCHLORIDE INJECTION, SOLUTION [HOSPIRA, INC.]",
+    "file": "labetalol-iv.md"
+  },
+  "lidocaine-iv": {
+    "setid": "1bf999b5-e290-dcbd-e063-6294a90a2bab",
+    "spl_version": "2",
+    "published_date": "Apr 21, 2026",
+    "title": "LIDOCAINE HYDROCHLORIDE AND DEXTROSE INJECTION, SOLUTION [HF ACQUISITION CO LLC, DBA HEALTHFIRST]",
+    "file": "lidocaine-iv.md"
+  },
+  "lidocaine-local": {
+    "setid": "32513e8b-2a81-436e-8da2-439c1dcbf116",
+    "spl_version": "8",
+    "published_date": "Sep 21, 2026",
+    "title": "LIDOCAINE HYDROCHLORIDE INJECTION, SOLUTION [CARDINAL HEALTH 107, LLC]",
+    "file": "lidocaine-local.md"
+  },
+  "methohexital": {
+    "setid": "f76d4ab9-2f6c-420b-afec-b9cdfdc083ce",
+    "spl_version": "3",
+    "published_date": "Jul 29, 2026",
+    "title": "METHOHEXITAL SODIUM INJECTION [HERITAGE PHARMACEUTICALS INC. D/B/A AVET PHARMACEUTICALS INC.]",
+    "file": "methohexital.md"
+  },
+  "midazolam": {
+    "setid": "f051776f-94c5-4e34-80ed-f45b9c36881e",
+    "spl_version": "18",
+    "published_date": "Sep 23, 2026",
+    "title": "MIDAZOLAM IN SODIUM CHLORIDE (MIDAZOLAM) INJECTION, SOLUTION [WG CRITICAL CARE, LLC.]",
+    "file": "midazolam.md"
+  },
+  "naloxone-iv": {
+    "setid": "b1303f15-c48b-a44d-b28a-72f370094e02",
+    "spl_version": "9",
+    "published_date": "Sep 07, 2026",
+    "title": "NALOXONE HYDROCHLORIDE INJECTION [DR. REDDY'S LABORATORIES, INC.]",
+    "file": "naloxone-iv.md"
+  },
+  "neostigmine": {
+    "setid": "4eab6184-1771-4c15-a127-4eb3e47affc2",
+    "spl_version": "6",
+    "published_date": "Sep 23, 2026",
+    "title": "NEOSTIGMINE METHYLSULFATE INJECTION [GLAND PHARMA LIMITED]",
+    "file": "neostigmine.md"
+  },
+  "ondansetron-iv": {
+    "setid": "1a44601b-c31c-4779-a688-28cc4cc75e8b",
+    "spl_version": "8",
+    "published_date": "Jul 28, 2026",
+    "title": "ONDANSETRON INJECTION [HENRY SCHEIN, INC.]",
+    "file": "ondansetron-iv.md"
+  },
+  "phenylephrine-iv": {
+    "setid": "e1a7ab4b-0afe-4463-a039-5be0323cf2f7",
+    "spl_version": "13",
+    "published_date": "Aug 20, 2026",
+    "title": "PHENYLEPHRINE HYDROCHLORIDE INJECTION IMMPHENTIV (PHENYLEPHRINE HYDROCHLORIDE) INJECTION IMMPHENTIV (PHENYLEPHRINE HYDROCHLORIDE) INJECTABLE, LIPOSOMAL [HIKMA PHARMACEUTICALS USA INC.]",
+    "file": "phenylephrine-iv.md"
+  },
+  "propofol": {
+    "setid": "f23fe3c5-aa37-4ecc-ad76-f13c1a1dabe2",
+    "spl_version": "6",
+    "published_date": "Sep 30, 2026",
+    "title": "PROPOFOL INJECTION, EMULSION [ANTHEA PHARMA PRIVATE LIMITED]",
+    "file": "propofol.md"
+  },
+  "remifentanil": {
+    "setid": "4dbcb8f9-1987-4b66-bd2f-d251fda0be10",
+    "spl_version": "5",
+    "published_date": "Aug 20, 2026",
+    "title": "ULTIVA (REMIFENTANIL HYDROCHLORIDE) INJECTION, POWDER, LYOPHILIZED, FOR SOLUTION [MYLAN INSTITUTIONAL LLC]",
+    "file": "remifentanil.md"
+  },
+  "rocuronium": {
+    "setid": "01825411-be08-4402-b101-cb546291c972",
+    "spl_version": "2",
+    "published_date": "Sep 28, 2026",
+    "title": "ROCURONIUM BROMIDE INJECTION [SAGENT PHARMACEUTICALS]",
+    "file": "rocuronium.md"
+  },
+  "ropivacaine": {
+    "setid": "cb6583ff-cde4-4280-aa5b-0bea2b844792",
+    "spl_version": "1",
+    "published_date": "Jul 30, 2026",
+    "title": "NAROPIN (ROPIVACAINE HYDROCHLORIDE) INJECTION, SOLUTION [FRESENIUS KABI USA, LLC]",
+    "file": "ropivacaine.md"
+  },
+  "succinylcholine": {
+    "setid": "efe5a242-5ba0-4b14-844c-206a79850d81",
+    "spl_version": "3",
+    "published_date": "Sep 11, 2026",
+    "title": "SUCCINYLCHOLINE CHLORIDE INJECTION, SOLUTION [REMEDYREPACK INC.]",
+    "file": "succinylcholine.md"
+  },
+  "sufentanil": {
+    "setid": "20293943-46ff-4345-1aa4-929b4e017a25",
+    "spl_version": "32",
+    "published_date": "Jun 03, 2026",
+    "title": "SUFENTANIL CITRATE INJECTION, SOLUTION [HOSPIRA, INC.]",
+    "file": "sufentanil.md"
+  },
+  "sugammadex": {
+    "setid": "c451d4dc-03f8-48d9-a848-6b2905122aa4",
+    "spl_version": "1",
+    "published_date": "Sep 25, 2026",
+    "title": "SUGAMMADEX INJECTION, SOLUTION [SOLUPHARM PHARMAZEUTISCHE ERZEUGNISSE GMBH]",
+    "file": "sugammadex.md"
+  },
+  "vasopressin": {
+    "setid": "53372911-5a55-dfac-e063-6394a90ae2f6",
+    "spl_version": "4",
+    "published_date": "Aug 19, 2026",
+    "title": "VASOPRESSIN INJECTION [HF ACQUISITION CO LLC, DBA HEALTHFIRST]",
+    "file": "vasopressin.md"
+  },
+  "vecuronium": {
+    "setid": "582c7f44-b614-18df-e063-6294a90a74b6",
+    "spl_version": "1",
+    "published_date": "Aug 11, 2026",
+    "title": "VECURONIUM BROMIDE INJECTION, POWDER, FOR SOLUTION [HF ACQUISITION CO LLC, DBA HEALTHFIRST]",
+    "file": "vecuronium.md"
+  }
+}
