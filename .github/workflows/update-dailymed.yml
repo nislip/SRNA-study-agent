@@ -1,0 +1,78 @@
+# Monthly DailyMed refresh for the drug-conversions skill.
+#
+# Runs on the 1st of each month (and on demand from the Actions tab). It updates
+# only labels whose version changed, then opens a pull request into `test`, so
+# every dosing change is reviewed before it moves through dev -> main.
+# If nothing changed, no pull request is opened.
+#
+# Notes:
+# - Scheduled runs only fire for workflow files on the repo's default branch,
+#   so this file must reach `main` before the monthly schedule starts.
+# - Pull requests opened with GITHUB_TOKEN don't trigger other workflows.
+#   That's fine here: your deploy runs when you merge to main yourself.
+
+name: Update DailyMed drug references
+
+on:
+  schedule:
+    - cron: "0 9 1 * *"      # 09:00 UTC on the 1st of every month
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Rebuild every file, even if label versions match"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: dailymed-refresh
+  cancel-in-progress: false
+
+env:
+  # Folder that contains the skill's SKILL.md. Must sit under a path listed in
+  # skillSync.github.sources[].paths in librechat.yaml.
+  SKILL_DIR: space/skills/drug-conversions
+  BASE_BRANCH: main
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BASE_BRANCH }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scripts/dailymed/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r scripts/dailymed/requirements.txt
+
+      - name: Pull labels from DailyMed
+        run: |
+          python scripts/dailymed/update_dailymed.py \
+            --skill-dir "$SKILL_DIR" \
+            --summary "$RUNNER_TEMP/dailymed_summary.md" \
+            ${{ inputs.force && '--force' || '' }}
+          cat "$RUNNER_TEMP/dailymed_summary.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open pull request into test
+        uses: peter-evans/create-pull-request@v7
+        with:
+          base: ${{ env.BASE_BRANCH }}
+          branch: automation/dailymed-refresh
+          delete-branch: true
+          commit-message: "DailyMed monthly label refresh"
+          title: "DailyMed label refresh"
+          body-path: ${{ runner.temp }}/dailymed_summary.md
+          labels: dailymed, automated
+          add-paths: |
+            ${{ env.SKILL_DIR }}/references/**
+            scripts/dailymed/manifest.json
