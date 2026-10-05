@@ -159,9 +159,9 @@ skillSync:
     intervalMinutes: 60
     sources:
       - id: sugammarex-skills
-        owner: YOUR-GITHUB-USERNAME
+        owner: nislip
         repo: srna-study-agent
         ref: main
         paths:
-          - skills
+          - skills/drug-conversions
         token: '${GITHUB_SKILLS_TOKEN}'
