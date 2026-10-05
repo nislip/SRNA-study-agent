@@ -56,6 +56,7 @@ SECTIONS = [
     ("34067-9", "Indications and Usage"),
     ("34068-7", "Dosage and Administration"),
     ("43678-2", "Dosage Forms and Strengths"),
+    ("34089-3", "Description"),          # chemical name, formula, molecular weight, pH, pKa
     ("34070-3", "Contraindications"),
     ("43685-7", "Warnings and Precautions"),
     ("34071-1", "Warnings"),
@@ -65,7 +66,8 @@ SECTIONS = [
     ("34090-1", "Clinical Pharmacology"),
 ]
 MAX_SECTION_CHARS = 15000   # keeps any one file small; truncation is noted in the file
-MAX_SEARCH_PAGES = 5        # 100 labels per page; popular generics have hundreds
+SEARCH_PAGE_SIZE = 50       # smaller pages: DailyMed returns 503s on heavy queries (e.g. morphine)
+MAX_SEARCH_PAGES = 10       # up to 500 labels; popular generics have hundreds
 REQUEST_DELAY = 0.25        # seconds between calls, to be polite to NLM
 
 HERE = Path(__file__).resolve().parent
@@ -75,7 +77,7 @@ HERE = Path(__file__).resolve().parent
 
 def make_session() -> requests.Session:
     s = requests.Session()
-    retry = Retry(total=4, backoff_factor=2, status_forcelist=(429, 500, 502, 503, 504),
+    retry = Retry(total=5, backoff_factor=3, status_forcelist=(429, 500, 502, 503, 504),
                   allowed_methods=("GET",))
     s.mount("https://", HTTPAdapter(max_retries=retry))
     s.headers["User-Agent"] = "SugammaRex-skill-refresh/1.0 (monthly DailyMed sync)"
@@ -112,7 +114,7 @@ def search_labels(session, entry: dict, defaults: dict) -> list[dict]:
     def fetch(with_doctype: bool) -> list[dict]:
         out, page = [], 1
         while page <= MAX_SEARCH_PAGES:
-            params = {"drug_name": entry["search"], "pagesize": 100, "page": page}
+            params = {"drug_name": entry["search"], "pagesize": SEARCH_PAGE_SIZE, "page": page}
             if with_doctype:
                 params["doctype"] = RX_DOCTYPE
             j = get(session, "spls.json", **params).json()
@@ -123,7 +125,14 @@ def search_labels(session, entry: dict, defaults: dict) -> list[dict]:
             page += 1
         return out
 
-    labels = fetch(True) or fetch(False)  # fall back if the doctype filter returns nothing
+    # Try with the prescription-label filter first. If that returns nothing, or
+    # DailyMed errors on the filtered query, retry once without it.
+    try:
+        labels = fetch(True)
+    except requests.RequestException as e:
+        print(f"         {entry['id']}: filtered search failed ({type(e).__name__}); retrying without it")
+        labels = []
+    labels = labels or fetch(False)
     keep = []
     for lab in labels:
         title = (lab.get("title") or "").upper()
@@ -157,7 +166,7 @@ def inline(el) -> str:
         elif t == "sup":
             parts.append("^" + inline(ch))
         elif t == "sub":
-            parts.append("_" + inline(ch))
+            parts.append(inline(ch))  # C32H53BrN2O4 reads better than C_32H_53...
         elif t == "footnote":
             pass  # footnotes clutter dosing tables; full text is on DailyMed
         else:
@@ -236,6 +245,69 @@ def render_section(sec, depth: int, fallback_title: str = "") -> list[str]:
     return out
 
 
+def render_ingredients(root) -> list[str]:
+    """DailyMed's "Ingredients and Appearance" data: each product's form, route,
+    active ingredient strength, and inactive ingredients. This comes from the
+    label's structured product data, not its text, so it is reliable for math."""
+    def strength(ing) -> str:
+        q = ing.find(f"{NS}quantity")
+        if q is None:
+            return ""
+        num, den = q.find(f"{NS}numerator"), q.find(f"{NS}denominator")
+        def fmt(x):
+            if x is None or not x.get("value"):
+                return ""
+            unit = x.get("unit", "")
+            return f"{x.get('value')} {unit if unit != '1' else ''}".strip()
+        n, d = fmt(num), fmt(den)
+        return f"{n} in {d}" if n and d and d != "1" else n
+
+    rows, inactive_sets, seen = [], {}, set()
+    for subj in root.iter(f"{NS}subject"):
+        prod = subj.find(f"{NS}manufacturedProduct/{NS}manufacturedProduct")
+        if prod is None:
+            continue
+        name_el, form_el = prod.find(f"{NS}name"), prod.find(f"{NS}formCode")
+        name = clean(inline(name_el)) if name_el is not None else ""
+        form = (form_el.get("displayName") or "").title() if form_el is not None else ""
+        routes = sorted({(r.get("displayName") or "").title()
+                         for r in subj.iter(f"{NS}routeCode") if r.get("displayName")})
+        active, inactive = [], []
+        for ing in prod.findall(f"{NS}ingredient"):
+            sub = ing.find(f"{NS}ingredientSubstance")
+            if sub is None:
+                continue
+            iname = clean(inline(sub.find(f"{NS}name"))) if sub.find(f"{NS}name") is not None else ""
+            code = sub.find(f"{NS}code")
+            unii = code.get("code") if code is not None else ""
+            if ing.get("classCode", "").startswith("ACT"):
+                active.append(f"{iname} ({strength(ing)})" + (f" [UNII {unii}]" if unii else ""))
+            else:
+                amt = strength(ing)
+                inactive.append(f"{iname} {amt}".strip())
+        if not active:
+            continue
+        key = (name, form, tuple(active))
+        if key in seen:  # same product in several package sizes
+            continue
+        seen.add(key)
+        rows.append([name, form, ", ".join(routes), "; ".join(active)])
+        if inactive:
+            inactive_sets.setdefault(tuple(inactive), []).append(name or form)
+
+    if not rows:
+        return []
+    out = ["## Ingredients and Composition", "",
+           "_From DailyMed's structured product data. Strength is per the stated volume or unit._", "",
+           "| product | form | route | active ingredient (strength) |", "|---|---|---|---|"]
+    out += ["| " + " | ".join(c.replace("|", "/") for c in r) + " |" for r in rows]
+    out.append("")
+    for ingredients, prods in inactive_sets.items():
+        label = "Inactive ingredients" + (f" ({', '.join(sorted(set(prods)))})" if len(inactive_sets) > 1 else "")
+        out += [f"**{label}:** " + "; ".join(ingredients), ""]
+    return out
+
+
 def truncate(lines: list[str], url: str) -> list[str]:
     text = "\n".join(lines)
     if len(text) <= MAX_SECTION_CHARS:
@@ -287,7 +359,11 @@ def label_to_markdown(xml_bytes: bytes, drug: dict, meta: dict) -> str:
             missing.append(name)
             continue
         body += truncate(render_section(sec, depth=2, fallback_title=name), url)
+        if code == "34089-3":
+            body += truncate(render_ingredients(root), url)
 
+    if "34089-3" not in found:  # no Description section: still include the ingredients table
+        body += truncate(render_ingredients(root), url)
     if not body:
         raise ValueError("no recognised sections in label XML")
     tail = []
@@ -346,9 +422,10 @@ def main() -> int:
     unchanged = 0
     todo = [d for d in drugs if not args.only or d["id"] in args.only]
 
-    for d in todo:
+    for n, d in enumerate(todo, 1):
         did = d["id"]
         prev = manifest.get(did, {})
+        print(f"[{n}/{len(todo)}] {did}")
         try:
             pinned = d.get("setid")
             meta, note = None, ""
@@ -372,6 +449,7 @@ def main() -> int:
             if (not args.force and prev.get("setid") == setid and str(prev.get("spl_version")) == version
                     and (ref_dir / fname).exists()):
                 unchanged += 1
+                print(f"         unchanged (v{version})")
                 continue
 
             xml = get(session, f"spls/{setid}.xml").content
@@ -403,7 +481,7 @@ def main() -> int:
 
     # ---- summary (used as the pull request body)
     s = [f"## DailyMed label refresh ({dt.date.today():%B %Y})", "",
-        f"Checked {len(todo)} drugs: {len(updated)} updated, {unchanged} unchanged, "
+         f"Checked {len(todo)} drugs: {len(updated)} updated, {unchanged} unchanged, "
          f"{len(failed)} failed, {len(removed)} removed.", ""]
     if updated:
         s += ["### Updated labels", "", "| drug | version | published | label |", "|---|---|---|---|"]
