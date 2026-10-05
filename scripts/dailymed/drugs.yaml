@@ -1,0 +1,64 @@
+# Curated drug list for the drug-conversions skill.
+#
+# Fields
+#   id:              file name in references/ (lowercase, hyphens). Changing it creates a new file.
+#   search:          name sent to DailyMed's drug_name search.
+#   title_contains:  optional word(s) that must appear in the label title (route or form, e.g. INJECTION).
+#   exclude:         optional word(s) that disqualify a label title.
+#   setid:           optional. Pins one exact label. Leave out to auto-pick the newest
+#                    matching label, then pin it after reviewing the first pull request.
+#   aliases:         optional brand or other names, shown in INDEX.md so the agent can match them.
+#
+# Titles on DailyMed are uppercase, e.g. "ROCURONIUM BROMIDE INJECTION, SOLUTION [HOSPIRA, INC.]".
+# Matching is case-insensitive.
+
+defaults:
+  exclude: [KIT]          # procedure kits bundle several drugs; never the right label
+
+drugs:
+  # Induction / sedation
+  - {id: propofol, search: propofol, title_contains: [EMULSION], aliases: [Diprivan]}
+  - {id: etomidate, search: etomidate, aliases: [Amidate]}
+  - {id: ketamine, search: ketamine, title_contains: [INJECTION], aliases: [Ketalar]}
+  - {id: methohexital, search: methohexital, aliases: [Brevital]}
+  - {id: dexmedetomidine, search: dexmedetomidine, title_contains: [INJECTION], exclude: [FILM], aliases: [Precedex]}
+  - {id: midazolam, search: midazolam, title_contains: [INJECTION], exclude: [NASAL, SYRUP], aliases: [Versed]}
+
+  # Opioids
+  - {id: fentanyl-iv, search: fentanyl citrate, title_contains: [INJECTION], aliases: [Sublimaze, fentanyl]}
+  - {id: remifentanil, search: remifentanil, aliases: [Ultiva]}
+  - {id: sufentanil, search: sufentanil, title_contains: [INJECTION], aliases: [Sufenta]}
+  - {id: hydromorphone-iv, search: hydromorphone, title_contains: [INJECTION], aliases: [Dilaudid]}
+  - {id: morphine-iv, search: morphine sulfate, title_contains: [INJECTION], aliases: [morphine, Duramorph]}
+
+  # Neuromuscular blockade and reversal
+  - {id: succinylcholine, search: succinylcholine, aliases: [Anectine, Quelicin, sux]}
+  - {id: rocuronium, search: rocuronium, aliases: [Zemuron, roc]}
+  - {id: vecuronium, search: vecuronium, aliases: [vec]}
+  - {id: cisatracurium, search: cisatracurium, aliases: [Nimbex]}
+  - {id: sugammadex, search: sugammadex, aliases: [Bridion]}
+  - {id: neostigmine, search: neostigmine, title_contains: [INJECTION], aliases: [Bloxiverz]}
+  - {id: glycopyrrolate-iv, search: glycopyrrolate, title_contains: [INJECTION], aliases: [Robinul, glyco]}
+
+  # Local anesthetics (one file per route where labels differ)
+  - {id: lidocaine-local, search: lidocaine hydrochloride, title_contains: [INJECTION], exclude: [EPINEPHRINE, DEXTROSE], aliases: [Xylocaine]}
+  - {id: lidocaine-iv, search: lidocaine hydrochloride and dextrose, aliases: [lidocaine antiarrhythmic]}
+  - {id: bupivacaine, search: bupivacaine hydrochloride, title_contains: [INJECTION], exclude: [EPINEPHRINE, DEXTROSE, LIPOSOM, MELOXICAM], aliases: [Marcaine, Sensorcaine]}
+  - {id: bupivacaine-spinal, search: bupivacaine, title_contains: [DEXTROSE], aliases: [hyperbaric bupivacaine, Marcaine Spinal]}
+  - {id: ropivacaine, search: ropivacaine, aliases: [Naropin]}
+
+  # Vasoactive
+  - {id: phenylephrine-iv, search: phenylephrine hydrochloride, title_contains: [INJECTION], aliases: [neo, Neo-Synephrine]}
+  - {id: ephedrine, search: ephedrine sulfate, title_contains: [INJECTION], aliases: [Akovaz]}
+  - {id: vasopressin, search: vasopressin, aliases: [Vasostrict]}
+  - {id: esmolol, search: esmolol, aliases: [Brevibloc]}
+  - {id: labetalol-iv, search: labetalol, title_contains: [INJECTION]}
+
+  # Antiemetics, analgesics, other
+  - {id: ondansetron-iv, search: ondansetron, title_contains: [INJECTION], aliases: [Zofran]}
+  - {id: dexamethasone-iv, search: dexamethasone sodium phosphate, title_contains: [INJECTION], aliases: [Decadron]}
+  - {id: ketorolac-iv, search: ketorolac, title_contains: [INJECTION], exclude: [NASAL, OPHTHALMIC], aliases: [Toradol]}
+  - {id: acetaminophen-iv, search: acetaminophen, title_contains: [INJECTION], aliases: [Ofirmev, IV Tylenol]}
+  - {id: naloxone-iv, search: naloxone, title_contains: [INJECTION], exclude: [NASAL, AUTO], aliases: [Narcan]}
+  - {id: flumazenil, search: flumazenil, aliases: [Romazicon]}
+  - {id: dantrolene, search: dantrolene, title_contains: [INJECT], aliases: [Dantrium, Ryanodex]}
