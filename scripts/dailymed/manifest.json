@@ -146,6 +146,13 @@
     "title": "MIDAZOLAM IN SODIUM CHLORIDE (MIDAZOLAM) INJECTION, SOLUTION [WG CRITICAL CARE, LLC.]",
     "file": "midazolam.md"
   },
+  "morphine-iv": {
+    "setid": "1f53de80-efc8-4930-b3e3-fba0d026af05",
+    "spl_version": "8",
+    "published_date": "Sep 10, 2026",
+    "title": "MORPHINE SULFATE INJECTION, SOLUTION [FRESENIUS KABI, USA LLC]",
+    "file": "morphine-iv.md"
+  },
   "naloxone-iv": {
     "setid": "b1303f15-c48b-a44d-b28a-72f370094e02",
     "spl_version": "9",

@@ -25,6 +25,7 @@ Generated monthly from DailyMed. Open `references/<file>` for the drug you need.
 | lidocaine-local | lidocaine-local.md | Xylocaine | LIDOCAINE HYDROCHLORIDE INJECTION, SOLUTION [CARDINAL HEALTH 107, LLC] | 8 | Sep 21, 2026 |
 | methohexital | methohexital.md | Brevital | METHOHEXITAL SODIUM INJECTION [HERITAGE PHARMACEUTICALS INC. D/B/A AVET PHARMACEUTICALS INC.] | 3 | Jul 29, 2026 |
 | midazolam | midazolam.md | Versed | MIDAZOLAM IN SODIUM CHLORIDE (MIDAZOLAM) INJECTION, SOLUTION [WG CRITICAL CARE, LLC.] | 18 | Sep 23, 2026 |
+| morphine-iv | morphine-iv.md | morphine, Duramorph | MORPHINE SULFATE INJECTION, SOLUTION [FRESENIUS KABI, USA LLC] | 8 | Sep 10, 2026 |
 | naloxone-iv | naloxone-iv.md | Narcan | NALOXONE HYDROCHLORIDE INJECTION [DR. REDDY'S LABORATORIES, INC.] | 9 | Sep 07, 2026 |
 | neostigmine | neostigmine.md | Bloxiverz | NEOSTIGMINE METHYLSULFATE INJECTION [GLAND PHARMA LIMITED] | 6 | Sep 23, 2026 |
 | ondansetron-iv | ondansetron-iv.md | Zofran | ONDANSETRON INJECTION [HENRY SCHEIN, INC.] | 8 | Jul 28, 2026 |
