@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Receptor signaling: an interactive diagram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F7F9F9; --ink:#1B2530; --muted:#55636F; --line:#D5DEE0;
+  --panel:#FFFFFF; --cyto:#E2EEEC; --ecf:#F7F9F9;
+  --head:#B4C4E0; --headStroke:#5D7099; --tail:#C8A74A;
+  --ion:#3E8A93; --rtk:#4F68B0; --gpcr:#8E2F6E; --nuc:#A86F12;
+  --chan:#86AEB5; --rtkFill:#7187C4; --gp:#9A3577;
+  --alpha:#E6D27C; --beta:#8D6BAA; --gamma:#A9B5E3;
+  --ac:#EEF2FB; --sr:#EBC66B; --hsp:#A3544E;
+  --nucleus:#D9B4B1; --nucleusEdge:#C29591;
+  --ligand:#D6533F; --ligand2:#E4A23A; --ligand3:#7D5BA6;
+  --hl:#FFE89A; --focus:#0E6F78; --arrow:#2B3640;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121A20; --ink:#E7EDF0; --muted:#9FB0BA; --line:#2C3A44;
+    --panel:#18232B; --cyto:#1A2B2D; --ecf:#121A20;
+    --head:#5E7096; --headStroke:#8FA3CC; --tail:#8E7631;
+    --chan:#4D7C84; --rtkFill:#5268A8; --gp:#B5508F;
+    --alpha:#BFA94F; --beta:#7B5C99; --gamma:#6F7DB8;
+    --ac:#2B3850; --sr:#C29E45; --hsp:#9A4A44;
+    --nucleus:#4A2F31; --nucleusEdge:#6E4645;
+    --hl:#6B5A1C; --focus:#5CC3CC; --arrow:#C9D4DA;
+    --ion:#6FBCC5; --rtk:#8EA3E6; --gpcr:#E07BB9; --nuc:#E2AA4A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121A20; --ink:#E7EDF0; --muted:#9FB0BA; --line:#2C3A44;
+  --panel:#18232B; --cyto:#1A2B2D; --ecf:#121A20;
+  --head:#5E7096; --headStroke:#8FA3CC; --tail:#8E7631;
+  --chan:#4D7C84; --rtkFill:#5268A8; --gp:#B5508F;
+  --alpha:#BFA94F; --beta:#7B5C99; --gamma:#6F7DB8;
+  --ac:#2B3850; --sr:#C29E45; --hsp:#9A4A44;
+  --nucleus:#4A2F31; --nucleusEdge:#6E4645;
+  --hl:#6B5A1C; --focus:#5CC3CC; --arrow:#C9D4DA;
+  --ion:#6FBCC5; --rtk:#8EA3E6; --gpcr:#E07BB9; --nuc:#E2AA4A;
+}
+html,body{height:auto}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}
+.wrap{max-width:1360px;margin:0 auto;padding:28px 20px 40px}
+header h1{font-family:"Newsreader",Georgia,serif;font-weight:500;font-size:clamp(28px,4vw,42px);line-height:1.1;margin:0 0 6px;letter-spacing:-.01em}
+header p{margin:0;color:var(--muted);max-width:62ch}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:20px 0 14px}
+.controls .sep{flex:1}
+.pill{font:inherit;font-size:14px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.pill .dot{width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted))}
+.pill[aria-pressed="true"]{border-color:var(--c,var(--ink));background:color-mix(in srgb,var(--c,var(--ink)) 14%,var(--panel))}
+.pill:focus-visible,.idx button:focus-visible,.panel button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow-x:auto}
+svg.dia{display:block;width:100%;min-width:640px;height:auto}
+.panel{position:sticky;top:calc(16px + env(safe-area-inset-top,0px));background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;max-height:calc(100vh - 32px);overflow:auto}
+.panel .tag{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)}
+.panel .tag .dot{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.panel h2{font-family:"Newsreader",Georgia,serif;font-weight:600;font-size:28px;line-height:1.15;margin:6px 0 14px}
+.panel h3{font-size:14px;font-weight:700;margin:16px 0 4px;color:var(--muted)}
+.panel p{font-family:"Newsreader",Georgia,serif;font-size:18px;line-height:1.55;margin:0}
+.panel .ex{border-left:3px solid var(--c);padding-left:12px}
+.rel{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.rel button{font:inherit;font-size:14px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;padding:4px 9px;cursor:pointer}
+.rel button:hover{background:color-mix(in srgb,var(--c) 12%,transparent)}
+.empty p{color:var(--muted);font-family:inherit;font-size:16px}
+.close{display:none}
+.idx{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.idx h4{margin:0 0 6px;font-size:15px;display:flex;align-items:center;gap:8px}
+.idx h4 .dot{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.idx ul{list-style:none;margin:0;padding:0}
+.idx button{font:inherit;font-size:15px;background:none;border:none;color:var(--ink);padding:3px 0;cursor:pointer;text-align:left;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.idx button:hover,.idx button.on{text-decoration-color:var(--c)}
+.idx button.on{font-weight:700}
+/* SVG */
+.dia text{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;fill:var(--ink);font-size:17px}
+.dia .hdr text{font-size:15px;font-weight:700;fill:var(--muted)}
+.dia .term{cursor:pointer}
+.dia .term .hit{fill:transparent;rx:6px}
+.dia .term:hover .hit{fill:color-mix(in srgb,var(--hl) 55%,transparent)}
+.dia .term.active .hit{fill:var(--hl)}
+.dia .term:focus{outline:none}
+.dia .term:focus-visible .hit{stroke:var(--focus);stroke-width:2.5}
+.dia .term.shape.active{filter:drop-shadow(0 0 5px var(--focus)) drop-shadow(0 0 2px var(--focus))}
+.dia .term.shape:hover{filter:brightness(1.08)}
+.dia .arr{fill:none;stroke:var(--arrow);stroke-width:1.6}
+.dia [data-path]{transition:opacity .25s}
+.dia.filtered [data-path]:not([data-path="shared"]):not(.keep){opacity:.14}
+.dia.quiz .term.label:not(.revealed) text{fill:transparent}
+.dia.quiz .term.label:not(.revealed) .hit{fill:color-mix(in srgb,var(--muted) 22%,transparent);stroke:var(--muted);stroke-dasharray:4 3}
+.dia .halo{paint-order:stroke;stroke:var(--cyto);stroke-width:5px;stroke-linejoin:round}
+.dia .haloE{paint-order:stroke;stroke:var(--ecf);stroke-width:5px}
+@media (max-width:980px){
+  .layout{grid-template-columns:1fr}
+  .panel{position:fixed;left:0;right:0;bottom:0;top:auto;border-radius:16px 16px 0 0;max-height:56vh;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 24px rgba(0,0,0,.18);transform:translateY(105%);transition:transform .25s;z-index:5}
+  .panel.open{transform:none}
+  .close{display:block;position:absolute;top:10px;right:12px;font:inherit;font-size:14px;background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:4px 10px;cursor:pointer}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Four ways a cell receives a signal</h1>
+  <p>Select any label or structure to see what it is and the job it does in the pathway. Use the pathway buttons to focus on one route, or hide the labels to test yourself.</p>
+</header>
+
+<div class="controls" role="group" aria-label="Diagram controls">
+  <button class="pill" data-filter="all" aria-pressed="true">All pathways</button>
+  <button class="pill" data-filter="ion" style="--c:var(--ion)" aria-pressed="false"><span class="dot"></span>Ion channel</button>
+  <button class="pill" data-filter="rtk" style="--c:var(--rtk)" aria-pressed="false"><span class="dot"></span>Tyrosine kinase</button>
+  <button class="pill" data-filter="gpcr" style="--c:var(--gpcr)" aria-pressed="false"><span class="dot"></span>G protein-coupled</button>
+  <button class="pill" data-filter="nuc" style="--c:var(--nuc)" aria-pressed="false"><span class="dot"></span>Intracellular receptor</button>
+  <span class="sep"></span>
+  <button class="pill" id="quizBtn" aria-pressed="false">Hide labels</button>
+</div>
+
+<div class="layout">
+<div class="stage">
+<svg class="dia" id="dia" viewBox="0 0 1200 1020" role="img" aria-labelledby="diaTitle">
+<title id="diaTitle">Diagram of four receptor types: ligand-gated ion channel, receptor tyrosine kinase, G protein-coupled receptor, and intracellular receptor acting as a transcription factor</title>
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--arrow)"/></marker>
+  <pattern id="lipid" x="40" y="200" width="22" height="130" patternUnits="userSpaceOnUse">
+    <line x1="7.5" y1="18" x2="7.5" y2="60" stroke="var(--tail)" stroke-width="2.4" stroke-linecap="round"/>
+    <line x1="14.5" y1="18" x2="14.5" y2="60" stroke="var(--tail)" stroke-width="2.4" stroke-linecap="round"/>
+    <line x1="7.5" y1="70" x2="7.5" y2="112" stroke="var(--tail)" stroke-width="2.4" stroke-linecap="round"/>
+    <line x1="14.5" y1="70" x2="14.5" y2="112" stroke="var(--tail)" stroke-width="2.4" stroke-linecap="round"/>
+    <circle cx="11" cy="10" r="8.5" fill="var(--head)" stroke="var(--headStroke)" stroke-width="1.2"/>
+    <circle cx="11" cy="120" r="8.5" fill="var(--head)" stroke="var(--headStroke)" stroke-width="1.2"/>
+  </pattern>
+  <clipPath id="cellClip"><rect x="0" y="320" width="1200" height="700"/></clipPath>
+</defs>
+
+<!-- compartments -->
+<g data-path="shared">
+  <rect x="0" y="0" width="1200" height="1020" fill="var(--ecf)"/>
+  <rect x="0" y="320" width="1200" height="700" fill="var(--cyto)"/>
+  <g class="term shape" data-term="nucleus" clip-path="url(#cellClip)">
+    <ellipse cx="620" cy="1210" rx="545" ry="445" fill="var(--nucleus)" stroke="var(--nucleusEdge)" stroke-width="8"/>
+  </g>
+  <g class="term shape" data-term="membrane"><rect x="0" y="200" width="1200" height="130" fill="url(#lipid)"/></g>
+</g>
+
+<!-- headers -->
+<g class="hdr">
+  <g class="term label" data-term="ionchannel" data-path="ion"><text x="150" y="34" text-anchor="middle">Receptor</text><text x="150" y="54" text-anchor="middle">ion channel</text></g>
+  <g class="term label" data-term="rtk" data-path="rtk"><text x="360" y="34" text-anchor="middle">Receptor</text><text x="360" y="54" text-anchor="middle">tyrosine kinase</text></g>
+  <g class="term label" data-term="gpcr" data-path="gpcr"><text x="655" y="34" text-anchor="middle">G protein-coupled</text><text x="655" y="54" text-anchor="middle">receptor</text></g>
+  <g class="term label" data-term="rtf" data-path="nuc"><text x="1095" y="34" text-anchor="middle">Receptor</text><text x="1095" y="54" text-anchor="middle">transcription factor</text></g>
+</g>
+
+<!-- ===== ION CHANNEL ===== -->
+<g data-path="ion">
+  <g class="term shape" data-term="ionchannel">
+    <rect x="100" y="178" width="42" height="178" rx="18" fill="var(--chan)" stroke="var(--ion)" stroke-width="2"/>
+    <rect x="160" y="178" width="42" height="178" rx="18" fill="var(--chan)" stroke="var(--ion)" stroke-width="2"/>
+  </g>
+  <g class="term shape" data-term="ligand">
+    <path d="M58 118 l18 -6 l-6 18 z" fill="var(--ligand)"/>
+    <path d="M100 166 l16 -4 l-4 16 z" fill="var(--ligand)"/>
+  </g>
+  <path class="arr" d="M76 126 Q 92 132 98 156" marker-end="url(#ah)"/>
+  <circle cx="151" cy="128" r="7" fill="#5DA06A"/>
+  <path class="arr" d="M151 140 L151 410" marker-end="url(#ah)"/>
+  <circle cx="151" cy="424" r="7" fill="#5DA06A"/>
+  <path class="arr" d="M151 438 L151 494" marker-end="url(#ah)"/>
+  <g class="term label" data-term="ion"><text x="166" y="134" class="haloE">Ion</text></g>
+  <g class="term label" data-term="membranepotential"><text x="151" y="520" text-anchor="middle">Change in</text><text x="151" y="541" text-anchor="middle">membrane</text><text x="151" y="562" text-anchor="middle">potential</text></g>
+  <path class="arr" d="M151 576 C 170 650 320 700 452 704" marker-end="url(#ah)"/>
+</g>
+
+<!-- ===== RTK ===== -->
+<g data-path="rtk">
+  <g class="term shape" data-term="rtk">
+    <line x1="349" y1="210" x2="312" y2="142" stroke="var(--rtkFill)" stroke-width="12" stroke-linecap="round"/>
+    <line x1="371" y1="210" x2="408" y2="142" stroke="var(--rtkFill)" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="309" cy="136" r="11" fill="var(--rtkFill)" stroke="var(--rtk)" stroke-width="2"/>
+    <circle cx="411" cy="136" r="11" fill="var(--rtkFill)" stroke="var(--rtk)" stroke-width="2"/>
+    <rect x="342" y="200" width="13" height="180" rx="6" fill="var(--rtkFill)" stroke="var(--rtk)" stroke-width="1.5"/>
+    <rect x="365" y="200" width="13" height="180" rx="6" fill="var(--rtkFill)" stroke="var(--rtk)" stroke-width="1.5"/>
+  </g>
+  <g class="term shape" data-term="ligand">
+    <rect x="351" y="186" width="18" height="18" transform="rotate(45 360 195)" fill="var(--ligand2)" stroke="#A86B14" stroke-width="1"/>
+    <path d="M326 104 l18 -6 l-6 18 z" fill="var(--ligand2)"/>
+  </g>
+  <path class="arr" d="M342 114 Q 352 140 357 172" marker-end="url(#ah)"/>
+  <g class="term shape" data-term="tyr">
+    <circle cx="334" cy="400" r="16" fill="var(--rtkFill)" stroke="var(--rtk)" stroke-width="1.5"/>
+    <circle cx="386" cy="400" r="16" fill="var(--rtkFill)" stroke="var(--rtk)" stroke-width="1.5"/>
+    <text x="334" y="406" text-anchor="middle" style="font-size:14px;fill:#fff">Tyr</text>
+    <text x="386" y="406" text-anchor="middle" style="font-size:14px;fill:#fff">Tyr</text>
+  </g>
+  <g class="term shape" data-term="activated">
+    <rect x="384" y="418" width="66" height="38" rx="13" fill="#D98A80" stroke="#A95A50" stroke-width="1.5"/>
+  </g>
+  <g class="term shape" data-term="phosphate">
+    <circle cx="316" cy="428" r="11" fill="var(--panel)" stroke="var(--rtk)" stroke-width="1.5"/>
+    <text x="316" y="433" text-anchor="middle" style="font-size:13px">P</text>
+    <circle cx="403" cy="437" r="11" fill="var(--panel)" stroke="var(--rtk)" stroke-width="1.5"/>
+    <text x="403" y="442" text-anchor="middle" style="font-size:13px">P</text>
+  </g>
+  <path class="arr" d="M270 412 Q 300 428 290 452" marker-end="url(#ah)"/>
+  <g class="term label" data-term="atp"><text x="246" y="410" class="halo">ATP</text></g>
+  <g class="term label" data-term="adp"><text x="246" y="472" class="halo">ADP</text></g>
+  <g class="term label" data-term="activated"><text x="462" y="436" class="halo">Activated</text><text x="462" y="456" class="halo">protein</text></g>
+  <path class="arr" d="M408 462 Q 376 470 366 494" marker-end="url(#ah)"/>
+  <g class="term label" data-term="cascade"><text x="362" y="520" text-anchor="middle">Signal</text><text x="362" y="541" text-anchor="middle">transduction</text><text x="362" y="562" text-anchor="middle">cascade</text></g>
+  <path class="arr" d="M370 576 C 400 630 440 670 478 688" marker-end="url(#ah)"/>
+</g>
+
+<!-- ===== GPCR ===== -->
+<g data-path="gpcr">
+  <g class="term shape" data-term="gpcr">
+    <path d="M600 104 Q 520 100 520 165 L520 345 Q520 377 542.5 377 Q565 377 565 345 L565 185 Q565 158 587.5 158 Q610 158 610 185 L610 345 Q610 377 632.5 377 Q655 377 655 345 L655 185 Q655 158 677.5 158 Q700 158 700 185 L700 345 Q700 377 722.5 377 Q745 377 745 345 L745 185 Q745 158 767.5 158 Q790 158 790 185 L790 360 Q790 398 762 404"
+      fill="none" stroke="var(--gp)" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g class="term shape" data-term="ligand">
+    <path d="M758 140 l18 0 l-9 -16 z" fill="var(--ligand2)" transform="rotate(180 767 135)"/>
+    <path d="M838 96 l18 -6 l-6 18 z" fill="var(--ligand2)"/>
+  </g>
+  <path class="arr" d="M834 104 Q 806 108 786 124" marker-end="url(#ah)"/>
+  <g class="term shape" data-term="gprotein">
+    <circle cx="800" cy="452" r="14" fill="var(--beta)" stroke="#5B3F78" stroke-width="1.2"/>
+    <circle cx="827" cy="456" r="14" fill="var(--gamma)" stroke="#5E6CA8" stroke-width="1.2"/>
+    <text x="800" y="458" text-anchor="middle" style="font-size:14px;fill:#fff">β</text>
+    <text x="827" y="461" text-anchor="middle" style="font-size:14px">γ</text>
+  </g>
+  <g class="term shape" data-term="galpha">
+    <circle cx="815" cy="425" r="16" fill="var(--alpha)" stroke="#A89540" stroke-width="1.2"/>
+    <text x="815" y="431" text-anchor="middle" style="font-size:15px">α</text>
+    <circle cx="916" cy="352" r="15" fill="var(--alpha)" stroke="#A89540" stroke-width="1.2"/>
+    <text x="916" y="358" text-anchor="middle" style="font-size:15px">α</text>
+  </g>
+  <path class="arr" d="M832 414 Q 860 360 896 354" marker-end="url(#ah)"/>
+  <g class="term label" data-term="gdp"><text x="842" y="392" class="halo" style="font-size:15px">GDP</text></g>
+  <g class="term label" data-term="gtp"><text x="848" y="434" class="halo" style="font-size:15px">GTP</text></g>
+  <g class="term shape" data-term="ac">
+    <path d="M934 286 L984 286 Q 994 286 994 300 L994 404 Q 994 416 980 412 Q 955 400 950 380 Q 946 362 934 358 Z" fill="var(--ac)" stroke="#7C8FBE" stroke-width="2"/>
+  </g>
+  <g class="term label" data-term="ac"><text x="1004" y="440" text-anchor="middle" class="halo">Adenylyl cyclase</text></g>
+  <!-- beta-gamma release -->
+  <path class="arr" d="M800 470 Q 790 490 772 498" marker-end="url(#ah)"/>
+  <g class="term shape" data-term="gbg">
+    <circle cx="740" cy="504" r="14" fill="var(--beta)" stroke="#5B3F78" stroke-width="1.2"/>
+    <circle cx="767" cy="508" r="14" fill="var(--gamma)" stroke="#5E6CA8" stroke-width="1.2"/>
+    <text x="740" y="510" text-anchor="middle" style="font-size:14px;fill:#fff">β</text>
+    <text x="767" y="513" text-anchor="middle" style="font-size:14px">γ</text>
+  </g>
+  <path class="arr" d="M732 520 Q 712 538 686 546" marker-end="url(#ah)"/>
+  <path class="arr" d="M770 524 Q 785 540 800 548" marker-end="url(#ah)"/>
+  <g class="term label" data-term="direct"><text x="630" y="568" text-anchor="middle">Direct effects on</text><text x="630" y="589" text-anchor="middle">ion channels</text></g>
+  <g class="term label" data-term="sms"><text x="815" y="568" text-anchor="middle">Second messenger</text><text x="815" y="589" text-anchor="middle">systems</text></g>
+  <!-- ATP -> cAMP -->
+  <path class="arr" d="M972 418 C 996 470 990 520 970 548" marker-end="url(#ah)"/>
+  <g class="term label" data-term="atp"><text x="944" y="488" text-anchor="end" class="halo">ATP</text></g>
+  <path class="arr" d="M948 482 Q 966 486 982 478" marker-end="url(#ah)"/>
+  <g class="term label" data-term="camp"><text x="966" y="574" text-anchor="middle" style="font-weight:700">cAMP</text></g>
+  <g class="term label" data-term="secondmessenger"><text x="966" y="596" text-anchor="middle" style="font-size:15px;fill:var(--muted)">second messenger</text></g>
+  <path class="arr" d="M630 600 C 630 650 620 680 602 688" marker-end="url(#ah)"/>
+  <path class="arr" d="M815 604 C 800 660 720 700 664 704" marker-end="url(#ah)"/>
+  <path class="arr" d="M955 610 C 920 680 760 712 664 710" marker-end="url(#ah)"/>
+</g>
+
+<!-- ===== INTRACELLULAR RECEPTOR ===== -->
+<g data-path="nuc">
+  <g class="term shape" data-term="hormone">
+    <path d="M1076 132 l18 0 l-9 16 z" fill="var(--ligand3)"/>
+  </g>
+  <g class="term label" data-term="hormone"><text x="1064" y="146" text-anchor="end">Hormone</text></g>
+  <path class="arr" d="M1085 154 L1085 604" marker-end="url(#ah)"/>
+  <g class="term label" data-term="diffusion"><text x="1072" y="258" text-anchor="end" class="haloE" style="stroke:var(--panel)">Passive</text><text x="1072" y="280" text-anchor="end" class="haloE" style="stroke:var(--panel)">diffusion</text></g>
+  <g class="term shape" data-term="steroidreceptor">
+    <path d="M1048 618 L1104 618 L1094 636 L1108 650 L1096 668 L1104 686 L1048 686 Q1040 686 1040 678 L1040 626 Q1040 618 1048 618 Z" fill="var(--sr)" stroke="#A9832A" stroke-width="1.5"/>
+    <path d="M1076 618 l14 0 l-7 12 z" fill="var(--ligand3)"/>
+  </g>
+  <g class="term shape" data-term="hsp">
+    <path d="M1104 618 L1144 618 Q1152 618 1152 626 L1152 678 Q1152 686 1144 686 L1104 686 L1096 668 L1108 650 L1094 636 Z" fill="var(--hsp)" stroke="#73332E" stroke-width="1.5"/>
+  </g>
+  <g class="term label" data-term="steroidreceptor"><text x="1030" y="642" text-anchor="end" class="halo">Steroid</text><text x="1030" y="663" text-anchor="end" class="halo">receptor</text></g>
+  <g class="term label" data-term="hsp"><text x="1192" y="584" text-anchor="end" class="halo">Heat shock</text><text x="1192" y="604" text-anchor="end" class="halo">protein</text></g>
+  <path class="arr" d="M1140 694 Q 1150 730 1180 742" marker-end="url(#ah)"/>
+  <path class="arr" d="M1062 694 C 1040 900 760 990 540 940" marker-end="url(#ah)"/>
+  <g class="term label" data-term="translocation"><text x="1060" y="790" text-anchor="middle" class="halo">Translocation</text><text x="1060" y="811" text-anchor="middle" class="halo">to nucleus</text></g>
+  <!-- DNA -->
+  <g class="term shape" data-term="hre" id="dna"></g>
+  <g class="term shape" data-term="steroidreceptor">
+    <rect x="440" y="880" width="30" height="50" rx="5" fill="var(--sr)" stroke="#A9832A" stroke-width="1.5"/>
+    <rect x="474" y="880" width="30" height="50" rx="5" fill="var(--sr)" stroke="#A9832A" stroke-width="1.5"/>
+    <path d="M448 880 l14 0 l-7 -12 z" fill="var(--ligand3)" transform="rotate(180 455 874)"/>
+    <path d="M482 880 l14 0 l-7 -12 z" fill="var(--ligand3)" transform="rotate(180 489 874)"/>
+  </g>
+  <path class="arr" d="M472 970 L472 940" marker-end="url(#ah)"/>
+  <g class="term label" data-term="hre"><text x="472" y="992" text-anchor="middle">Hormone response element</text></g>
+  <path class="arr" d="M610 896 L610 868 L668 868" marker-end="url(#ah)"/>
+  <g class="term label" data-term="gene"><text x="640" y="826" text-anchor="middle">Gene</text><text x="640" y="847" text-anchor="middle">expression</text></g>
+  <path class="arr" d="M640 806 C 640 770 600 750 580 726" marker-end="url(#ah)"/>
+  <g class="term label" data-term="nucleus"><text x="880" y="900" text-anchor="middle">Nucleus</text></g>
+</g>
+
+<g data-path="shared">
+  <g class="term label" data-term="membrane"><text x="1192" y="190" text-anchor="end" style="font-size:14px" class="haloE">Plasma membrane</text></g>
+  <g class="term label" data-term="cellular"><text x="558" y="712" text-anchor="middle" style="font-size:21px;font-weight:700" class="halo">Cellular response</text></g>
+</g>
+</svg>
+</div>
+
+<aside class="panel" id="panel" aria-live="polite">
+  <button class="close" id="closeBtn">Close</button>
+  <div id="panelBody" class="empty">
+    <h2>Pick a term</h2>
+    <p>Every label and every drawn structure in the diagram can be selected. You'll see a definition, the part it plays in this diagram, and related terms to follow next.</p>
+  </div>
+</aside>
+</div>
+
+<nav class="idx" id="idx" aria-label="All terms"></nav>
+</div>
+
+<script>
+const PATHS = {
+  ion:{name:"Ion channel pathway",c:"var(--ion)"},
+  rtk:{name:"Tyrosine kinase pathway",c:"var(--rtk)"},
+  gpcr:{name:"G protein pathway",c:"var(--gpcr)"},
+  nuc:{name:"Intracellular receptor pathway",c:"var(--nuc)"},
+  shared:{name:"Shared by all pathways",c:"var(--muted)"}
+};
+const T = {
+  membrane:{name:"Plasma membrane",path:"shared",
+    what:"The phospholipid bilayer that encloses the cell. Its oily, hydrophobic core blocks most charged or water-soluble molecules from crossing on their own.",
+    role:"It is the dividing line of the whole diagram. Three of the four receptor types span it so that a ligand outside can trigger a change inside; only the lipid-soluble hormone on the far right passes straight through.",
+    rel:["ligand","diffusion","ionchannel"]},
+  ligand:{name:"Ligand (first messenger)",path:"shared",
+    what:"Any molecule that binds selectively to a receptor, such as a neurotransmitter, hormone, growth factor, or drug. An agonist activates the receptor; an antagonist blocks it.",
+    role:"Drawn as the small triangles and diamond outside the cell. Binding changes the receptor's shape, which is the first step of every pathway shown.",
+    rel:["ionchannel","rtk","gpcr","hormone"]},
+  ionchannel:{name:"Receptor ion channel (ligand-gated)",path:"ion",
+    what:"A transmembrane protein that forms a pore. When a ligand binds, the pore opens and lets specific ions flow across the membrane.",
+    role:"The fastest pathway in the diagram, acting in milliseconds. The receptor and the effector are the same protein, so no intermediate messengers are needed.",
+    ex:"Nicotinic acetylcholine receptors let Na⁺ in to trigger muscle contraction. GABA-A receptors let Cl⁻ in; benzodiazepines enhance their opening.",
+    rel:["ion","membranepotential","ligand"]},
+  ion:{name:"Ion",path:"ion",
+    what:"A charged atom or molecule, such as Na⁺, K⁺, Ca²⁺, or Cl⁻. Ions move through open channels down their electrochemical gradient.",
+    role:"The green dot passing through the open channel. Its movement into or out of the cell is the actual signal in this pathway.",
+    rel:["ionchannel","membranepotential"]},
+  membranepotential:{name:"Change in membrane potential",path:"ion",
+    what:"A shift in the voltage across the membrane. Positive ions entering depolarize the cell; negative ions entering (or positive ions leaving) hyperpolarize it.",
+    role:"The output of the ion channel pathway. Depolarization can fire an action potential or open voltage-gated Ca²⁺ channels, leading to the cellular response.",
+    rel:["ion","ionchannel","cellular"]},
+  rtk:{name:"Receptor tyrosine kinase",path:"rtk",
+    what:"A membrane receptor with a kinase enzyme built into its intracellular tail. Ligand binding brings two receptor halves together so they phosphorylate each other's tyrosine residues.",
+    role:"The Y-shaped receptor. Unlike the GPCR, it is its own enzyme, so it turns binding directly into phosphorylation. Effects take minutes to hours.",
+    ex:"The insulin receptor and growth-factor receptors such as EGFR. Drugs like imatinib and erlotinib block tyrosine kinase activity in some cancers.",
+    rel:["tyr","phosphate","activated","cascade"]},
+  tyr:{name:"Tyrosine residues (Tyr)",path:"rtk",
+    what:"Tyrosine is an amino acid with a hydroxyl (–OH) group that a kinase can attach a phosphate to.",
+    role:"The circles on the receptor's tail. Once phosphorylated they become docking sites that recruit and activate downstream proteins.",
+    rel:["phosphate","rtk","activated"]},
+  phosphate:{name:"Phosphate group (P)",path:"rtk",
+    what:"A PO₄ group transferred from ATP to a protein by a kinase. Adding one changes a protein's shape and activity, acting as an on/off switch.",
+    role:"The circled P on the tyrosine and on the activated protein, showing the switch has been flipped.",
+    rel:["atp","tyr","activated"]},
+  atp:{name:"ATP (adenosine triphosphate)",path:"shared",
+    what:"The cell's main energy-carrying molecule, with three phosphate groups.",
+    role:"Appears twice. In the tyrosine kinase pathway it donates a phosphate (becoming ADP). In the G protein pathway it is the raw material that adenylyl cyclase converts into cAMP.",
+    rel:["adp","phosphate","ac","camp"]},
+  adp:{name:"ADP (adenosine diphosphate)",path:"rtk",
+    what:"What remains of ATP after one phosphate group has been removed.",
+    role:"The by-product of the kinase reaction, showing that ATP supplied the phosphate added to tyrosine.",
+    rel:["atp","phosphate"]},
+  activated:{name:"Activated protein",path:"rtk",
+    what:"A downstream signaling protein that binds the phosphorylated tyrosines (often through an SH2 domain) and is switched on, frequently by being phosphorylated itself.",
+    role:"The first relay protein after the receptor. It hands the signal off to the cascade below.",
+    ex:"IRS-1 after insulin binding, or Grb2, which links growth-factor receptors to Ras.",
+    rel:["tyr","cascade","phosphate"]},
+  cascade:{name:"Signal transduction cascade",path:"rtk",
+    what:"A chain of proteins that activate one another in sequence, often kinases phosphorylating the next kinase.",
+    role:"Carries and amplifies the tyrosine kinase signal toward the cellular response, such as glucose uptake or cell division.",
+    ex:"Ras → Raf → MEK → ERK (the MAP kinase pathway).",
+    rel:["activated","cellular"]},
+  gpcr:{name:"G protein-coupled receptor (GPCR)",path:"gpcr",
+    what:"A receptor that snakes across the membrane seven times. Ligand binding makes it activate a G protein on the inside of the membrane.",
+    role:"The magenta serpentine receptor. It has no enzyme activity of its own; it works by switching on a G protein. Effects take seconds to minutes. It is the largest receptor family and a target for roughly a third of all drugs.",
+    ex:"β-adrenergic receptors (epinephrine; blocked by propranolol), muscarinic receptors, and opioid receptors.",
+    rel:["gprotein","galpha","ligand"]},
+  gprotein:{name:"G protein (α, β, γ)",path:"gpcr",
+    what:"A three-part (heterotrimeric) protein anchored to the inner membrane. At rest, the α subunit holds GDP and stays bound to β and γ.",
+    role:"The intermediary between the GPCR and its effectors. The activated receptor makes α swap GDP for GTP, splitting the trio into α-GTP and the βγ pair.",
+    rel:["galpha","gbg","gtp","gdp"]},
+  galpha:{name:"Gα subunit",path:"gpcr",
+    what:"The G protein subunit that binds GDP or GTP. It is active with GTP and slowly hydrolyzes it back to GDP, switching itself off.",
+    role:"Shown twice: on the G protein, then docked onto adenylyl cyclase after moving along the membrane. Gs-type α stimulates adenylyl cyclase; Gi inhibits it; Gq activates phospholipase C instead.",
+    ex:"Cholera toxin locks Gsα in the 'on' state, producing massive cAMP and fluid loss in the gut.",
+    rel:["gtp","ac","gprotein"]},
+  gbg:{name:"Gβγ dimer",path:"gpcr",
+    what:"The β and γ subunits, which stay together after leaving α.",
+    role:"Released βγ can act on its own, opening certain ion channels directly or regulating enzymes.",
+    ex:"In the heart, acetylcholine at M2 receptors releases βγ that opens K⁺ channels, slowing heart rate.",
+    rel:["direct","sms","gprotein"]},
+  gtp:{name:"GTP (guanosine triphosphate)",path:"gpcr",
+    what:"A nucleotide that acts as the 'on' signal for G proteins.",
+    role:"Replaces GDP on the α subunit when the receptor is activated, turning α on.",
+    rel:["gdp","galpha"]},
+  gdp:{name:"GDP (guanosine diphosphate)",path:"gpcr",
+    what:"The nucleotide bound to an inactive G protein α subunit.",
+    role:"Released from α when the receptor activates the G protein, and reformed when α hydrolyzes GTP to switch off.",
+    rel:["gtp","galpha"]},
+  ac:{name:"Adenylyl cyclase",path:"gpcr",
+    what:"A membrane-bound enzyme that converts ATP into cyclic AMP (cAMP).",
+    role:"The effector enzyme of this GPCR pathway. Active Gsα docks onto it and turns it on.",
+    ex:"Forskolin activates adenylyl cyclase directly, bypassing the receptor.",
+    rel:["galpha","atp","camp"]},
+  camp:{name:"cAMP (cyclic AMP)",path:"gpcr",
+    what:"A small molecule made from ATP that activates protein kinase A (PKA). Phosphodiesterase enzymes break it down to end the signal.",
+    role:"The second messenger produced by adenylyl cyclase. One activated receptor leads to many cAMP molecules, which amplifies the signal before it reaches the cellular response.",
+    ex:"Phosphodiesterase inhibitors such as theophylline raise cAMP levels.",
+    rel:["secondmessenger","ac","cellular"]},
+  secondmessenger:{name:"Second messenger",path:"gpcr",
+    what:"A small intracellular molecule produced in response to an extracellular first messenger (the ligand). Common examples are cAMP, cGMP, IP₃, DAG, and Ca²⁺.",
+    role:"Labels cAMP's job: it carries the signal from the membrane into the cell interior, where the ligand itself never goes.",
+    rel:["camp","sms","ligand"]},
+  sms:{name:"Second messenger systems",path:"gpcr",
+    what:"Other enzyme pathways that G proteins can feed into, producing different second messengers.",
+    role:"Represents GPCR outputs besides cAMP, for example phospholipase C making IP₃ (which releases Ca²⁺) and DAG (which activates protein kinase C).",
+    rel:["secondmessenger","gbg","camp"]},
+  direct:{name:"Direct effects on ion channels",path:"gpcr",
+    what:"G protein subunits binding to and opening or closing ion channels without any second messenger.",
+    role:"One route by which the released βγ dimer changes cell behavior, linking the GPCR pathway back to membrane excitability.",
+    rel:["gbg","ionchannel"]},
+  rtf:{name:"Receptor transcription factor (intracellular receptor)",path:"nuc",
+    what:"A receptor located inside the cell, in the cytoplasm or nucleus, that binds lipid-soluble ligands and then acts as a transcription factor to switch genes on or off.",
+    role:"The slowest pathway, taking hours to days, because it works by making new proteins. Effects can last long after the hormone is gone.",
+    ex:"Receptors for glucocorticoids (prednisone), estrogen, testosterone, thyroid hormone, and vitamin D.",
+    rel:["hormone","steroidreceptor","hre","gene"]},
+  hormone:{name:"Lipid-soluble hormone",path:"nuc",
+    what:"A hormone, usually a steroid, that dissolves in lipids and so can cross the plasma membrane.",
+    role:"The purple triangle. Unlike the other ligands it never needs a surface receptor; it travels to the receptor inside the cell.",
+    rel:["diffusion","steroidreceptor","rtf"]},
+  diffusion:{name:"Passive diffusion",path:"nuc",
+    what:"Movement of a molecule across a membrane down its concentration gradient, with no transporter and no energy required.",
+    role:"How the lipid-soluble hormone gets into the cell, slipping through the bilayer's hydrophobic core.",
+    rel:["hormone","membrane"]},
+  steroidreceptor:{name:"Steroid receptor",path:"nuc",
+    what:"An intracellular receptor protein with a hormone-binding region and a DNA-binding region.",
+    role:"Shown twice: in the cytoplasm held by a heat shock protein, then in the nucleus as a hormone-bound pair attached to DNA.",
+    rel:["hsp","translocation","hre"]},
+  hsp:{name:"Heat shock protein (chaperone)",path:"nuc",
+    what:"A chaperone protein, such as Hsp90, that helps other proteins fold and stay stable.",
+    role:"Holds the empty steroid receptor in an inactive state. When hormone binds, the heat shock protein lets go (the arrow leading away), freeing the receptor to move.",
+    rel:["steroidreceptor","translocation"]},
+  translocation:{name:"Translocation to nucleus",path:"nuc",
+    what:"Movement of a protein from the cytoplasm into the nucleus through nuclear pores.",
+    role:"The long arrow carrying the hormone-receptor complex from the cytoplasm to the DNA.",
+    rel:["steroidreceptor","nucleus","hre"]},
+  nucleus:{name:"Nucleus",path:"nuc",
+    what:"The membrane-bound compartment that contains the cell's DNA and where transcription happens.",
+    role:"Destination of the intracellular receptor pathway. Only this pathway in the diagram acts on DNA directly.",
+    rel:["hre","gene","translocation"]},
+  hre:{name:"Hormone response element",path:"nuc",
+    what:"A specific short DNA sequence, usually near a gene's promoter, recognized by a hormone-receptor complex.",
+    role:"Where the receptor pair binds the DNA double helix. It decides which genes respond to that hormone.",
+    rel:["steroidreceptor","gene"]},
+  gene:{name:"Gene expression",path:"nuc",
+    what:"Transcription of a gene into mRNA and its translation into protein.",
+    role:"The output of the intracellular receptor pathway. New proteins being made is why this route is slow but long-lasting.",
+    rel:["hre","cellular"]},
+  cellular:{name:"Cellular response",path:"shared",
+    what:"The final change in what the cell does: contracting, secreting, altering metabolism, dividing, firing, and so on.",
+    role:"Where every arrow ends. The four pathways differ in speed and mechanism but converge on changing cell behavior.",
+    rel:["membranepotential","cascade","camp","gene"]}
+};
+
+const svg=document.getElementById('dia');
+const panel=document.getElementById('panel');
+const body=document.getElementById('panelBody');
+const NS="http://www.w3.org/2000/svg";
+
+// DNA helix
+(function(){
+  const g=document.getElementById('dna');
+  const x0=330,x1=720,y=905,a=18,per=62;
+  const strand=ph=>{let d="";for(let x=x0;x<=x1;x+=3){const yy=y+a*Math.sin((x-x0)/per*2*Math.PI+ph);d+=(x===x0?"M":"L")+x+" "+yy.toFixed(1)+" ";}return d;};
+  for(let x=x0+6;x<x1;x+=9){const s1=y+a*Math.sin((x-x0)/per*2*Math.PI),s2=y+a*Math.sin((x-x0)/per*2*Math.PI+Math.PI);
+    const l=document.createElementNS(NS,'line');l.setAttribute('x1',x);l.setAttribute('x2',x);l.setAttribute('y1',s1);l.setAttribute('y2',s2);l.setAttribute('stroke','#E7C85A');l.setAttribute('stroke-width','2.5');g.appendChild(l);}
+  ['#3E64B8','#5C86D6'].forEach((c,i)=>{const p=document.createElementNS(NS,'path');p.setAttribute('d',strand(i*Math.PI));p.setAttribute('fill','none');p.setAttribute('stroke',c);p.setAttribute('stroke-width','4');g.appendChild(p);});
+})();
+
+// hit areas for labels; accessibility attrs
+function addHits(){
+  svg.querySelectorAll('.term.label').forEach(g=>{
+    if(g.querySelector('.hit'))return;
+    const b=g.getBBox();const r=document.createElementNS(NS,'rect');
+    r.setAttribute('class','hit');r.setAttribute('x',b.x-6);r.setAttribute('y',b.y-3);r.setAttribute('width',b.width+12);r.setAttribute('height',b.height+6);r.setAttribute('rx',6);
+    g.insertBefore(r,g.firstChild);
+  });
+}
+svg.querySelectorAll('.term').forEach(g=>{
+  const k=g.dataset.term;
+  if(g.classList.contains('label')){g.setAttribute('tabindex','0');g.setAttribute('role','button');g.setAttribute('aria-label',T[k].name);}
+  g.addEventListener('click',e=>{e.stopPropagation();select(k,g)});
+  g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(k,g)}});
+});
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(addHits);
+setTimeout(addHits,600);
+
+let current=null;
+function select(k,src){
+  current=k;
+  svg.querySelectorAll('.term').forEach(g=>g.classList.toggle('active',g.dataset.term===k));
+  if(svg.classList.contains('quiz')) svg.querySelectorAll(`.term.label[data-term="${k}"]`).forEach(g=>g.classList.add('revealed'));
+  const t=T[k],p=PATHS[t.path];
+  body.className='';body.style.setProperty('--c',p.c);panel.style.setProperty('--c',p.c);
+  body.innerHTML=`<span class="tag"><span class="dot"></span>${p.name}</span>
+    <h2>${t.name}</h2>
+    <h3>What it is</h3><p>${t.what}</p>
+    <h3>Role in this diagram</h3><p>${t.role}</p>
+    ${t.ex?`<h3>Example</h3><p class="ex">${t.ex}</p>`:''}
+    <h3>Related terms</h3><div class="rel">${t.rel.map(r=>`<button data-k="${r}">${T[r].name}</button>`).join('')}</div>`;
+  body.querySelectorAll('.rel button').forEach(b=>b.onclick=()=>select(b.dataset.k));
+  document.querySelectorAll('.idx button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
+  panel.classList.add('open');panel.scrollTop=0;
+}
+document.getElementById('closeBtn').onclick=()=>panel.classList.remove('open');
+
+// filters
+document.querySelectorAll('[data-filter]').forEach(btn=>btn.onclick=()=>{
+  const f=btn.dataset.filter;
+  document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',b===btn));
+  svg.classList.toggle('filtered',f!=='all');
+  svg.querySelectorAll('[data-path]').forEach(g=>g.classList.toggle('keep',g.dataset.path===f));
+});
+// quiz
+const qb=document.getElementById('quizBtn');
+qb.onclick=()=>{const on=!svg.classList.contains('quiz');svg.classList.toggle('quiz',on);qb.setAttribute('aria-pressed',on);qb.textContent=on?'Show labels':'Hide labels';
+  svg.querySelectorAll('.revealed').forEach(g=>g.classList.remove('revealed'));};
+
+// index
+const idx=document.getElementById('idx');
+['ion','rtk','gpcr','nuc','shared'].forEach(pk=>{
+  const keys=Object.keys(T).filter(k=>T[k].path===pk);
+  const d=document.createElement('div');d.style.setProperty('--c',PATHS[pk].c);
+  d.innerHTML=`<h4><span class="dot"></span>${PATHS[pk].name}</h4><ul>${keys.map(k=>`<li><button data-k="${k}">${T[k].name}</button></li>`).join('')}</ul>`;
+  idx.appendChild(d);
+});
+idx.querySelectorAll('button').forEach(b=>b.onclick=()=>select(b.dataset.k));
+</script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SugammaRex interactive diagrams</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F7F9F9; --ink:#1B2530; --muted:#55636F; --line:#D5DEE0;
+  --panel:#FFFFFF; --soft:#EEF4F3; --focus:#0E6F78; --code:#F1F4F5;
+  --pharm:#8E2F6E; --phys:#1F7A8C; --airway:#4F68B0; --other:#A86F12;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121A20; --ink:#E7EDF0; --muted:#9FB0BA; --line:#2C3A44;
+    --panel:#18232B; --soft:#1C2A30; --focus:#5CC3CC; --code:#1F2B33;
+    --pharm:#E07BB9; --phys:#5CC3D4; --airway:#8EA3E6; --other:#E2AA4A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121A20; --ink:#E7EDF0; --muted:#9FB0BA; --line:#2C3A44;
+  --panel:#18232B; --soft:#1C2A30; --focus:#5CC3CC; --code:#1F2B33;
+  --pharm:#E07BB9; --phys:#5CC3D4; --airway:#8EA3E6; --other:#E2AA4A;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 20px 56px}
+h1{font-family:"Newsreader",Georgia,serif;font-weight:500;font-size:clamp(30px,4.5vw,46px);line-height:1.1;margin:0 0 8px;letter-spacing:-.01em}
+.lede{color:var(--muted);margin:0;max-width:62ch}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:24px 0 8px}
+.search{flex:1 1 260px;font:inherit;padding:9px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink)}
+.pill{font:inherit;font-size:14px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.pill .dot{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.pill[aria-pressed="true"]{border-color:var(--c,var(--ink));background:color-mix(in srgb,var(--c,var(--ink)) 13%,var(--panel))}
+.search:focus-visible,.pill:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.count{color:var(--muted);font-size:14px;margin:6px 0 0}
+section.cat{margin-top:30px}
+section.cat h2{font-family:"Newsreader",Georgia,serif;font-weight:600;font-size:24px;margin:0 0 12px;display:flex;align-items:center;gap:10px}
+section.cat h2 .dot{width:11px;height:11px;border-radius:50%;background:var(--c)}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.item{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.item h3{margin:0;font-size:19px;line-height:1.25}
+.item h3 a{color:var(--ink);text-decoration:none}
+.item h3 a:hover{text-decoration:underline;text-decoration-color:var(--c);text-underline-offset:3px}
+.item p{margin:0;color:var(--muted);font-size:15px}
+.links{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;margin-top:auto;padding-top:4px}
+.links a{color:var(--focus);font-weight:700}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-size:12px;color:var(--muted);background:var(--soft);border-radius:6px;padding:2px 7px}
+.empty{color:var(--muted);margin-top:30px}
+/* document viewer */
+.doc{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px clamp(18px,4vw,44px);margin-top:20px}
+.doc .back{font-size:14px;color:var(--focus);font-weight:700;text-decoration:none}
+.md{font-family:"Newsreader",Georgia,serif;font-size:18px;line-height:1.6;max-width:84ch}
+.md h1{font-size:34px;margin:18px 0 10px}
+.md h2{font-size:26px;font-weight:600;margin:32px 0 8px;border-top:1px solid var(--line);padding-top:20px}
+.md h3{font-size:20px;font-weight:600;margin:24px 0 6px}
+.md p,.md li{margin:0 0 12px}
+.md code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85em;background:var(--code);padding:1px 5px;border-radius:4px}
+.md pre{background:var(--code);padding:14px;border-radius:8px;overflow-x:auto}
+.md pre code{background:none;padding:0}
+.md .tblwrap{overflow-x:auto;margin:0 0 16px}
+.md table{border-collapse:collapse;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:14px;font-variant-numeric:tabular-nums}
+.md th,.md td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+.md th{color:var(--muted)}
+.md .katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.err{color:var(--muted)}
+footer{margin-top:44px;color:var(--muted);font-size:14px;max-width:70ch}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Interactive diagrams</h1>
+    <p class="lede">Explore, adjust, and test yourself on the processes you need to know. Each diagram runs in your browser and doesn't use any chat credits.</p>
+  </header>
+
+  <main id="app"></main>
+
+  <footer>For study only. Models and diagrams are simplified and are not clinical or dosing guidance.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script>
+/* =========================================================
+   CATALOG: add one entry per diagram. Paths are relative to
+   this index.html (space/interactive-diagrams/).
+   ========================================================= */
+const CATEGORIES = {
+  pharmacology: { name: "Pharmacology", color: "var(--pharm)" },
+  physiology:   { name: "Physiology",   color: "var(--phys)" },
+  airway:       { name: "Airway",       color: "var(--airway)" },
+  other:        { name: "Other",        color: "var(--other)" }
+};
+
+const DIAGRAMS = [
+  {
+    title: "Receptor signaling",
+    path: "pharmacology/signal-receptors.html",
+    category: "pharmacology",
+    description: "Ion channels, receptor tyrosine kinases, G protein-coupled receptors, and intracellular receptors. Select any structure for its definition and role.",
+    tags: ["receptors", "second messengers", "cAMP", "G proteins", "steroids"]
+  },
+  {
+    title: "Context-sensitive decrement times",
+    path: "pharmacology/anesthetics-simulation.html",
+    category: "pharmacology",
+    description: "Animated three-compartment simulator for propofol, remifentanil, fentanyl, and alfentanil. Change drug, age, and decrement and watch the curves update.",
+    tags: ["pharmacokinetics", "propofol", "opioids", "infusions", "half-time"],
+    doc: "supporting-documentation/anesthetics-simulation-documentation.md",
+    docLabel: "The math, with a worked example"
+  }
+];
+
+/* ========================= App ========================= */
+const app = document.getElementById('app');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safePath = p => typeof p === 'string' && /^[\w\-\/.]+\.(md|html)$/.test(p) && !p.includes('..') && !p.startsWith('/');
+
+function route(){
+  const doc = new URLSearchParams(location.search).get('doc');
+  if (doc && safePath(doc) && doc.endsWith('.md')) renderDoc(doc); else renderIndex();
+}
+
+/* ---------- Index view ---------- */
+let filterCat = 'all', query = '';
+function renderIndex(){
+  document.title = 'SugammaRex interactive diagrams';
+  const used = Object.keys(CATEGORIES).filter(k => DIAGRAMS.some(d => d.category === k));
+  app.innerHTML = `
+    <div class="tools" role="search">
+      <input class="search" id="q" type="search" placeholder="Search diagrams, drugs, or topics" aria-label="Search diagrams" value="${esc(query)}">
+      <div role="group" aria-label="Filter by category" style="display:flex;flex-wrap:wrap;gap:8px">
+        <button class="pill" data-cat="all" aria-pressed="${filterCat==='all'}">All</button>
+        ${used.map(k => `<button class="pill" data-cat="${k}" style="--c:${CATEGORIES[k].color}" aria-pressed="${filterCat===k}"><span class="dot"></span>${CATEGORIES[k].name}</button>`).join('')}
+      </div>
+    </div>
+    <p class="count" id="count" aria-live="polite"></p>
+    <div id="results"></div>`;
+  const q = document.getElementById('q');
+  q.addEventListener('input', () => { query = q.value; drawList(); });
+  app.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => {
+    filterCat = b.dataset.cat;
+    app.querySelectorAll('[data-cat]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    drawList();
+  });
+  drawList();
+}
+
+function drawList(){
+  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const hits = DIAGRAMS.filter(d => {
+    if (filterCat !== 'all' && d.category !== filterCat) return false;
+    const hay = [d.title, d.description, ...(d.tags || []), CATEGORIES[d.category]?.name].join(' ').toLowerCase();
+    return terms.every(t => hay.includes(t));
+  });
+  document.getElementById('count').textContent = `${hits.length} of ${DIAGRAMS.length} diagram${DIAGRAMS.length === 1 ? '' : 's'}`;
+  const out = document.getElementById('results');
+  if (!hits.length){ out.innerHTML = `<p class="empty">No diagrams match. Try a broader term or choose All.</p>`; return; }
+  out.innerHTML = Object.keys(CATEGORIES).map(k => {
+    const items = hits.filter(d => d.category === k).sort((a, b) => a.title.localeCompare(b.title));
+    if (!items.length) return '';
+    const c = CATEGORIES[k];
+    return `<section class="cat" style="--c:${c.color}" aria-labelledby="cat-${k}">
+      <h2 id="cat-${k}"><span class="dot"></span>${c.name}</h2>
+      <div class="list">${items.map(card).join('')}</div>
+    </section>`;
+  }).join('');
+}
+
+function card(d){
+  const c = CATEGORIES[d.category] || CATEGORIES.other;
+  return `<article class="item" style="--c:${c.color}">
+    <h3><a href="${esc(d.path)}">${esc(d.title)}</a></h3>
+    <p>${esc(d.description)}</p>
+    ${d.tags?.length ? `<div class="tags">${d.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
+    <div class="links">
+      <a href="${esc(d.path)}">Open diagram</a>
+      ${d.doc ? `<a href="?doc=${encodeURIComponent(d.doc)}">${esc(d.docLabel || 'Supporting notes')}</a>` : ''}
+    </div>
+  </article>`;
+}
+
+/* ---------- Markdown viewer (renders LaTeX with KaTeX) ---------- */
+async function renderDoc(path){
+  app.innerHTML = `<article class="doc"><a class="back" href="./">All diagrams</a><div class="md" id="md"><p class="err">Loading…</p></div></article>`;
+  const box = document.getElementById('md');
+  try{
+    const res = await fetch(path);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    let src = await res.text();
+    // Protect code, then pull math out before markdown parsing so _ and \ survive.
+    const stash = [];
+    const keep = s => `@@K${stash.push(s) - 1}@@`;
+    src = src.replace(/```[\s\S]*?```/g, keep).replace(/`[^`\n]+`/g, keep);
+    const math = [];
+    const mathKeep = (tex, display) => `@@M${math.push({ tex, display }) - 1}@@`;
+    src = src.replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => '\n\n' + mathKeep(t, true) + '\n\n')
+             .replace(/(^|[^\\$])\$([^$\n]+?)\$/g, (_, pre, t) => pre + mathKeep(t, false));
+    src = src.replace(/@@K(\d+)@@/g, (_, i) => stash[i]);
+    let html = marked.parse(src);
+    html = html.replace(/@@M(\d+)@@/g, (_, i) => {
+      const m = math[i];
+      try { return katex.renderToString(m.tex, { displayMode: m.display, throwOnError: false }); }
+      catch { return esc(m.tex); }
+    });
+    box.innerHTML = html;
+    box.querySelectorAll('table').forEach(t => { const w = document.createElement('div'); w.className = 'tblwrap'; t.replaceWith(w); w.appendChild(t); });
+    const h = box.querySelector('h1'); if (h) document.title = h.textContent;
+  } catch (e){
+    box.innerHTML = `<p class="err">Couldn't load <code>${esc(path)}</code> (${esc(e.message)}). Check that the file exists at that path in <code>interactive-diagrams/</code>.</p>`;
+  }
+}
+
+route();
+</script>
+</body>
+</html>

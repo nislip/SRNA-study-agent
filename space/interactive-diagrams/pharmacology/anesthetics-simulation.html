@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Context-sensitive decrement times: anesthetic drug simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F7F9F9; --ink:#1B2530; --muted:#55636F; --line:#D5DEE0; --grid:#E6ECEE;
+  --panel:#FFFFFF; --soft:#EEF4F3;
+  --a:#1F7A8C; --b:#9A3577; --cp:#8A96A3;
+  --v1:#6E86C2; --v2:#3E9AA6; --v3:#C9A04A; --ve:#9A3577;
+  --hl:#FFE89A; --focus:#0E6F78; --warn:#9A5B00;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121A20; --ink:#E7EDF0; --muted:#9FB0BA; --line:#2C3A44; --grid:#22303A;
+    --panel:#18232B; --soft:#1C2A30;
+    --a:#5CC3D4; --b:#E07BB9; --cp:#7D8B98;
+    --v1:#8EA3E6; --v2:#6FBCC5; --v3:#E2B860; --ve:#E07BB9;
+    --hl:#6B5A1C; --focus:#5CC3CC; --warn:#F0B85A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121A20; --ink:#E7EDF0; --muted:#9FB0BA; --line:#2C3A44; --grid:#22303A;
+  --panel:#18232B; --soft:#1C2A30;
+  --a:#5CC3D4; --b:#E07BB9; --cp:#7D8B98;
+  --v1:#8EA3E6; --v2:#6FBCC5; --v3:#E2B860; --ve:#E07BB9;
+  --hl:#6B5A1C; --focus:#5CC3CC; --warn:#F0B85A;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}
+.wrap{max-width:1360px;margin:0 auto;padding:28px 20px 48px}
+h1{font-family:"Newsreader",Georgia,serif;font-weight:500;font-size:clamp(28px,4vw,42px);line-height:1.1;margin:0 0 6px;letter-spacing:-.01em}
+.lede{margin:0;color:var(--muted);max-width:70ch}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;margin-top:20px;align-items:start}
+@media (max-width:1000px){.grid{grid-template-columns:1fr}}
+h2{font-family:"Newsreader",Georgia,serif;font-weight:600;font-size:23px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 12px}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;fill:var(--ink)}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 18px;margin-top:14px}
+.ctl label{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);gap:8px}
+.ctl label b{color:var(--ink);font-variant-numeric:tabular-nums}
+.ctl .sw{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+input[type=range]{width:100%;accent-color:var(--focus)}
+.ext{color:var(--warn);font-size:12px;min-height:16px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:inherit;font-size:14px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer}
+.btn.primary{background:var(--focus);border-color:var(--focus);color:#fff}
+.btn[aria-pressed="true"]{border-color:var(--ink);background:var(--soft)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,.t:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+select{font:inherit;font-size:14px;padding:5px 8px;border-radius:8px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink)}
+details{margin-top:12px;font-size:14px}
+details summary{cursor:pointer;color:var(--muted)}
+.clock{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;margin:10px 0 4px}
+.clock div{min-width:120px}
+.clock b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
+.readout{font-size:14px;color:var(--muted);min-height:22px;margin-top:6px}
+.t{border:none;background:none;padding:0;font:inherit;color:inherit;cursor:pointer;text-decoration:underline dotted;text-decoration-color:var(--muted);text-underline-offset:3px}
+.t.on{background:var(--hl);text-decoration-color:var(--ink)}
+.explain{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;margin-top:20px;align-items:start}
+@media (max-width:1000px){.explain{grid-template-columns:1fr}}
+.explain p{font-family:"Newsreader",Georgia,serif;font-size:18px;line-height:1.6;margin:0 0 12px;max-width:68ch}
+.concept h3{font-family:"Newsreader",Georgia,serif;font-weight:600;font-size:24px;margin:2px 0 10px;line-height:1.2}
+.concept h4{font-size:14px;color:var(--muted);margin:14px 0 4px}
+.concept p{font-family:"Newsreader",Georgia,serif;font-size:17px;line-height:1.55;margin:0}
+.concept .empty{color:var(--muted);font-family:inherit;font-size:15px}
+.note{border-left:3px solid var(--warn);padding:2px 0 2px 14px;margin-top:8px}
+.note p{font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chips .t{border:1px solid var(--line);border-radius:8px;padding:3px 9px;text-decoration:none;font-size:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.pcard{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.drugsel{width:100%}
+.presets{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+.under{margin-top:20px}
+.under table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+.under th,.under td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:right;white-space:nowrap}
+.under th:first-child,.under td:first-child{text-align:left}
+.under th{color:var(--muted);font-weight:700}
+.tbl{overflow-x:auto}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Why some anesthetics wear off slowly after long infusions</h1>
+  <p class="lede">Context-sensitive decrement time is how long the effect-site concentration takes to fall by a set percentage after an infusion stops. Pick a drug and age for two patients, choose two decrements, and every curve is recalculated from that drug's published pharmacokinetic model.</p>
+
+  <div class="presets" role="group" aria-label="Presets">
+    <span style="font-size:14px;color:var(--muted)">Try a comparison</span>
+    <button class="btn" data-preset="age">Propofol, 40 vs 80 years</button>
+    <button class="btn" data-preset="opioids">Fentanyl vs remifentanil</button>
+    <button class="btn" data-preset="alf">Alfentanil vs fentanyl</button>
+    <button class="btn" data-preset="hyp">Propofol vs remifentanil</button>
+  </div>
+
+  <div class="grid">
+    <section class="card" aria-labelledby="h-dec">
+      <h2 id="h-dec">Decrement time vs infusion duration</h2>
+      <p class="sub">Hover or drag across the chart to read values. Curves leaving the top keep rising beyond the axis.</p>
+      <svg id="decSvg" viewBox="0 0 640 400" role="img" aria-label="Line chart of effect-site decrement time against infusion duration for two patients and two decrement percentages"></svg>
+      <div class="readout" id="decReadout">&nbsp;</div>
+      <div class="controls">
+        <div class="ctl">
+          <label for="drugA"><span><span class="sw" style="background:var(--a)"></span>Patient A drug</span></label>
+          <select id="drugA" class="drugsel"></select>
+          <label for="ageA" style="margin-top:8px"><span>Age</span><b id="ageAv"></b></label><input type="range" id="ageA" min="18" max="90" value="40"><div class="ext" id="ageAx"></div>
+        </div>
+        <div class="ctl">
+          <label for="drugB"><span><span class="sw" style="background:var(--b)"></span>Patient B drug</span></label>
+          <select id="drugB" class="drugsel"></select>
+          <label for="ageB" style="margin-top:8px"><span>Age</span><b id="ageBv"></b></label><input type="range" id="ageB" min="18" max="90" value="80"><div class="ext" id="ageBx"></div>
+        </div>
+        <div class="ctl"><label for="d1"><span><span class="sw" style="background:var(--muted)"></span>Smaller decrement</span><b id="d1v"></b></label><input type="range" id="d1" min="10" max="90" step="5" value="50"></div>
+        <div class="ctl"><label for="d2"><span><span class="sw" style="background:repeating-linear-gradient(90deg,var(--muted) 0 5px,transparent 5px 8px)"></span>Larger decrement</span><b id="d2v"></b></label><input type="range" id="d2" min="10" max="95" step="5" value="80"></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <span style="font-size:14px;color:var(--muted)">Vertical axis</span>
+        <button class="btn" data-ymax="30" aria-pressed="true">30 min</button>
+        <button class="btn" data-ymax="60" aria-pressed="false">60</button>
+        <button class="btn" data-ymax="120" aria-pressed="false">120</button>
+        <button class="btn" data-ymax="300" aria-pressed="false">300</button>
+      </div>
+      <details>
+        <summary>Patient size (used by propofol, remifentanil and alfentanil)</summary>
+        <div class="controls">
+          <div class="ctl"><label for="wt">Weight <b id="wtv"></b></label><input type="range" id="wt" min="45" max="120" value="70"></div>
+          <div class="ctl"><label for="ht">Height <b id="htv"></b></label><input type="range" id="ht" min="150" max="200" value="170"></div>
+          <div class="ctl"><label for="sex">Sex</label><select id="sex"><option value="m">Male</option><option value="f">Female</option></select></div>
+        </div>
+      </details>
+    </section>
+
+    <section class="card" aria-labelledby="h-run">
+      <h2 id="h-run">Watch one infusion</h2>
+      <p class="sub">The infusion holds a steady concentration, then stops. Watch the peripheral compartments fill, then feed drug back as the effect site falls.</p>
+      <div class="row">
+        <label for="runP" style="font-size:14px;color:var(--muted)">Patient</label>
+        <select id="runP"><option value="A">A</option><option value="B">B</option></select>
+        <label for="runT" style="font-size:14px;color:var(--muted);margin-left:8px">Infusion</label>
+        <input type="range" id="runT" min="5" max="300" step="5" value="120" style="width:140px"><b id="runTv" style="font-size:14px"></b>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary" id="play">Play</button>
+        <button class="btn" id="reset">Reset</button>
+        <button class="btn" id="skip">Skip to end</button>
+        <label for="speed" style="font-size:14px;color:var(--muted);margin-left:auto">Speed</label>
+        <select id="speed"><option value="10">10 min/s</option><option value="25" selected>25 min/s</option><option value="60">60 min/s</option><option value="150">150 min/s</option></select>
+      </div>
+      <div class="clock">
+        <div><span class="sub" style="margin:0">Phase</span><b id="phase">Ready</b></div>
+        <div><span class="sub" style="margin:0">Infusion time</span><b id="clkInf">0 min</b></div>
+        <div><span class="sub" style="margin:0">Since stopping</span><b id="clkOff">–</b></div>
+      </div>
+      <svg id="tankSvg" viewBox="0 0 520 280" role="img" aria-label="Compartment model showing how full each compartment is"></svg>
+      <svg id="runSvg" viewBox="0 0 520 220" role="img" aria-label="Plasma and effect-site concentration over time for the selected infusion" style="margin-top:6px"></svg>
+      <div class="readout" id="runReadout">&nbsp;</div>
+    </section>
+  </div>
+
+  <section class="card under" aria-labelledby="h-under">
+    <h2 id="h-under">Under the hood</h2>
+    <p class="sub">Rate constants for each patient and the eigenvalues of the three-compartment block. Each eigenvalue is one exponential mode of the washout; its half-life is ln 2 / |λ|. The effect site adds a fourth mode, −ke0.</p>
+    <div class="tbl"><table id="modelTbl"></table></div>
+  </section>
+
+  <div class="explain">
+    <section class="card">
+      <h2>How to read it</h2>
+      <p>Select any underlined term for a definition and its role here.</p>
+      <p>During a long infusion, drug doesn't just sit in the blood. It moves into the <button class="t" data-k="v2">rapidly equilibrating compartment</button> within minutes and the <button class="t" data-k="v3">slowly equilibrating compartment</button> over hours. When the infusion stops, the <button class="t" data-k="effect">effect-site concentration</button> falls quickly at first through <button class="t" data-k="redistribution">redistribution</button> and <button class="t" data-k="clearance">elimination</button>. The longer the <button class="t" data-k="context">context</button>, the more drug the peripheral compartments hand back, which slows the fall.</p>
+      <p>Drugs differ in how much they store and how fast they clear. <button class="t" data-k="remifentanil">Remifentanil</button> is cleared so quickly that almost nothing builds up, so its curve stays flat. <button class="t" data-k="fentanyl">Fentanyl</button> loads a large, slow compartment, so its curve keeps climbing for hours. The table under the chart shows the same story as <button class="t" data-k="eigen">eigenvalues</button>, and it is why a drug's <button class="t" data-k="halflife">elimination half-life</button> can't predict recovery after an infusion.</p>
+      <div class="note">
+        <p><strong>About age and the propofol textbook figure.</strong> In the <button class="t" data-k="propofol">Schnider propofol model</button>, <button class="t" data-k="age">age</button> shrinks the rapid compartment, so the younger patient's curves rise <em>faster</em>. That's the reverse of the labels on the commonly reproduced figure, even though the shapes match. Worth asking your instructor. Older patients are also more <button class="t" data-k="sensitivity">sensitive</button> to these drugs, which concentration curves don't show.</p>
+      </div>
+    </section>
+    <aside class="card concept" id="concept" aria-live="polite">
+      <p class="empty">Select an underlined term to see it explained here.</p>
+    </aside>
+  </div>
+</div>
+
+<script>
+/* ================= Drug models ================= */
+function lbmJames(W,H,male){return male?1.1*W-128*(W/H)**2:1.07*W-148*(W/H)**2;}
+function fromCl(V1,V2,V3,Cl1,Cl2,Cl3,ke0){return {V1,V2,V3,k10:Cl1/V1,k12:Cl2/V1,k21:Cl2/V2,k13:Cl3/V1,k31:Cl3/V3,ke0};}
+function fromK(V1,k10,k12,k21,k13,k31,ke0){return {V1,V2:V1*k12/k21,V3:V1*k13/k31,k10,k12,k21,k13,k31,ke0};}
+const DRUGS={
+  propofol:{name:"Propofol",model:"Schnider 1998",range:[25,81],covs:true,
+    f:(age,W,H,male)=>{const L=lbmJames(W,H,male);
+      return fromCl(4.27,18.9-0.391*(age-53),238,
+        1.89+0.0456*(W-77)-0.0681*(L-59)+0.0264*(H-177),1.29-0.024*(age-53),0.836,0.456);}},
+  remifentanil:{name:"Remifentanil",model:"Minto 1997",range:[20,85],covs:true,
+    f:(age,W,H,male)=>{const L=lbmJames(W,H,male);
+      return fromCl(5.1-0.0201*(age-40)+0.072*(L-55),9.82-0.0811*(age-40)+0.108*(L-55),5.42,
+        2.6-0.0162*(age-40)+0.0191*(L-55),2.05-0.0301*(age-40),0.076-0.00113*(age-40),0.595-0.007*(age-40));}},
+  fentanyl:{name:"Fentanyl",model:"Shafer 1990",range:null,covs:false,
+    f:()=>fromK(6.09,0.083,0.471,0.102,0.225,0.006,0.147)},
+  alfentanil:{name:"Alfentanil",model:"Maitre 1987",range:[18,90],covs:true,
+    f:(age,W,H,male)=>{const V1=0.111*W*(male?1:1.15);
+      const Cl1=age<=40?0.356:0.356-0.00269*(age-40);
+      const k31=age<=40?0.0126:0.0126-0.000113*(age-40);
+      return fromK(V1,Cl1/V1,0.104,0.0673,0.017,k31,0.77);}}
+};
+
+/* ================= Concepts ================= */
+const C={
+ csdt:{n:"Context-sensitive decrement time",w:"The time for the concentration to fall by a given percentage after stopping an infusion that maintained a steady concentration. The 'context' is the infusion duration.",r:"Every point on the chart is one: horizontal position is the infusion duration, height is the minutes needed to reach the chosen fall.",rel:["decrement","context","halftime"]},
+ halftime:{n:"Context-sensitive half-time",w:"The 50% decrement, classically in plasma. Hughes and colleagues introduced it in 1992 to compare opioids and hypnotics.",r:"Set the smaller decrement to 50%. This page uses the effect site, so values run a little different from plasma tables.",rel:["csdt","decrement"]},
+ decrement:{n:"Decrement (%)",w:"How far the concentration must fall from its value when the infusion stops. 50% halves it; 80% leaves one-fifth.",r:"The two decrement sliders. Which matters clinically depends on how far above the waking concentration the patient was kept.",rel:["csdt","effect"]},
+ context:{n:"Context (infusion duration)",w:"How long the infusion ran before stopping.",r:"The chart's horizontal axis and the animation's infusion slider. Longer contexts let peripheral compartments fill.",rel:["v2","v3","csdt"]},
+ effect:{n:"Effect site (Ce)",w:"A theoretical compartment for the site of action, the brain for these drugs. It has negligible volume and lags behind plasma.",r:"The magenta curve and circle. Decrement times are measured here because that's what determines the clinical effect.",rel:["ke0","v1"]},
+ ke0:{n:"ke0",w:"The rate constant between plasma and the effect site. Equilibration half-time is ln 2 / ke0: about 1.5 min for propofol, 1.2 for remifentanil, 4.7 for fentanyl, 0.9 for alfentanil.",r:"Sets how far the effect site trails plasma, and is the fourth eigenvalue of the system.",rel:["effect","eigen"]},
+ v1:{n:"Central compartment (V1)",w:"The initial distribution volume: blood and highly perfused organs. Drug is infused into it and eliminated from it.",r:"The middle tank. Held steady during the infusion, then drops sharply when it stops.",rel:["v2","v3","clearance"]},
+ v2:{n:"Rapidly equilibrating compartment (V2)",w:"A peripheral volume exchanging drug with plasma within minutes, roughly muscle and well-perfused tissue.",r:"The left tank. Fills early, soaks up drug right after stopping, but after long infusions hands drug back.",rel:["age","redistribution","v3"]},
+ v3:{n:"Slowly equilibrating compartment (V3)",w:"A peripheral volume, largely fat, that takes hours to fill. Its size relative to elimination decides how context-sensitive a drug is.",r:"The right tank. For fentanyl it keeps filling for hours; that stored drug is why fentanyl's curve climbs.",rel:["context","redistribution","eigen"]},
+ redistribution:{n:"Redistribution",w:"Movement of drug between plasma and peripheral tissues. It pulls drug out of plasma early; after a long infusion the gradient reverses and tissue returns drug.",r:"The arrows between tanks. They flip direction once plasma falls below tissue concentration.",rel:["v2","v3","clearance"]},
+ clearance:{n:"Elimination clearance",w:"Volume of plasma cleared per minute, by liver metabolism for most of these drugs and by blood and tissue esterases for remifentanil.",r:"The arrow leaving V1, set by k10 in the table.",rel:["v1","halflife","remifentanil"]},
+ halflife:{n:"Elimination half-life",w:"Time for concentration to halve in the terminal phase, set by the slowest eigenvalue.",r:"Misleading for infusions: propofol's is many hours, yet its 50% decrement takes minutes, because faster modes do most of the early work.",rel:["csdt","eigen"]},
+ eigen:{n:"Eigenvalues (disposition rate constants)",w:"The washout is a sum of exponentials, one per eigenvalue of the rate-constant matrix. Often written α, β, γ. Longer infusions put more weight on the slow modes.",r:"The table under the chart. A drug whose slowest mode holds a lot of drug after the infusion (fentanyl) is strongly context-sensitive; one that clears before loading it (remifentanil) is not.",rel:["halflife","v3","csdt"]},
+ age:{n:"Age as a covariate",w:"Some models change parameters with age. Schnider propofol shrinks V2 and its clearance; Minto remifentanil lowers clearances and ke0; Maitre alfentanil lowers clearance after 40. Shafer fentanyl has no covariates.",r:"The age sliders. Check the table to see which rate constants move.",rel:["v2","sensitivity","propofol"]},
+ sensitivity:{n:"Pharmacodynamic sensitivity",w:"How strongly the brain responds to a given concentration. It increases with age for propofol and the opioids.",r:"Not shown, since this page only tracks concentrations. It's a major reason older patients get lower doses.",rel:["age","effect"]},
+ propofol:{n:"Propofol (Schnider model)",w:"Three-compartment model from volunteers aged 25 to 81, with age, weight, height, and lean body mass as covariates. Used in many effect-site target-controlled pumps.",r:"The default drug. Large V3 but high clearance, so the 50% curve stays low while the 80% curve climbs.",rel:["age","remifentanil","fentanyl"]},
+ remifentanil:{n:"Remifentanil (Minto model)",w:"An opioid broken down by blood and tissue esterases, giving very high clearance. The Minto model uses age and lean body mass.",r:"The flattest curves on the page: clearance empties V1 faster than the peripheral compartments can store drug.",rel:["clearance","fentanyl","eigen"]},
+ fentanyl:{n:"Fentanyl (Shafer model)",w:"A lipid-soluble opioid with low clearance relative to a large slow compartment. The Shafer model has fixed parameters with no covariates.",r:"The most context-sensitive drug here; switch the axis to 300 min to follow its curves.",rel:["v3","remifentanil","alfentanil"]},
+ alfentanil:{n:"Alfentanil (Maitre model)",w:"An opioid with a small V3 relative to its clearance. The Maitre model uses weight, sex, and age over 40.",r:"Rises early and then plateaus: once its modest slow compartment fills, longer infusions add little.",rel:["fentanyl","eigen"]}
+};
+const concept=document.getElementById('concept');
+function showC(k){const c=C[k];
+  document.querySelectorAll('.t').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
+  concept.innerHTML=`<h3>${c.n}</h3><h4>What it is</h4><p>${c.w}</p><h4>Role here</h4><p>${c.r}</p><h4>Related</h4><div class="chips">${c.rel.map(r=>`<button class="t" data-k="${r}">${C[r].n}</button>`).join('')}</div>`;
+  bindT(concept);
+  if(window.innerWidth<1000)concept.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});}
+function bindT(root){root.querySelectorAll('.t').forEach(b=>b.onclick=()=>showC(b.dataset.k));}
+bindT(document);
+
+/* ================= Linear algebra ================= */
+// state y = [C1, x2, x3, Ce], x_i = A_i/V1
+function sysMatrix(p,infusing){
+  const r0=infusing?[0,0,0,0]:[-(p.k10+p.k12+p.k13),p.k21,p.k31,0];
+  return [r0,[p.k12,-p.k21,0,0],[p.k13,0,-p.k31,0],[p.ke0,0,0,-p.ke0]];}
+const mm=(A,B)=>A.map((r,i)=>B[0].map((_,j)=>r.reduce((s,_,k)=>s+A[i][k]*B[k][j],0)));
+function expmStep(A,h){ // Taylor series for e^{Ah}; ||A h|| < 0.2 here, 12 terms is machine-exact
+  let P=[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]],S=P.map(r=>r.slice());
+  for(let n=1;n<=12;n++){P=mm(P,A).map(r=>r.map(v=>v*h/n));S=S.map((r,i)=>r.map((v,j)=>v+P[i][j]));}
+  return S;}
+const apply=(M,y)=>M.map(r=>r[0]*y[0]+r[1]*y[1]+r[2]*y[2]+r[3]*y[3]);
+function eig3(p){ // roots of x^3 - a2 x^2 + a1 x - a0 = 0 are -lambda
+  const a2=p.k10+p.k12+p.k13+p.k21+p.k31, a1=p.k10*p.k21+p.k10*p.k31+p.k12*p.k31+p.k13*p.k21+p.k21*p.k31, a0=p.k10*p.k21*p.k31;
+  const P=a1-a2*a2/3, Q=-2*a2**3/27+a2*a1/3-a0, m=2*Math.sqrt(-P/3), th=Math.acos(Math.max(-1,Math.min(1,3*Q/(P*m))))/3;
+  return [0,1,2].map(k=>-(m*Math.cos(th-2*Math.PI*k/3)+a2/3)).sort((x,y)=>x-y);}
+
+/* ================= Simulation ================= */
+const H=0.1,TMAX=300,TSTEP=2,DECAYMAX=1200;
+function makeSim(p){return {p,Minf:expmStep(sysMatrix(p,true),H),Moff:expmStep(sysMatrix(p,false),H)};}
+function decayTimes(sim,y0,targets){
+  const out=targets.map(()=>null);let y=y0,t=0,prev=y0[3];
+  while(t<DECAYMAX&&out.some(v=>v===null)){const n=apply(sim.Moff,y);t+=H;
+    targets.forEach((g,i)=>{if(out[i]===null&&n[3]<=g)out[i]=t-H+H*(prev-g)/(prev-n[3]);});prev=n[3];y=n;}
+  return out;}
+function curves(sim,fracs){
+  const targets=fracs.map(f=>1-f/100),res=fracs.map(()=>[]);let y=[1,0,0,1],t=0;
+  for(let T=0;T<=TMAX;T+=TSTEP){while(t<T-1e-9){y=apply(sim.Minf,y);t+=H;}
+    decayTimes(sim,y,targets).forEach((v,i)=>res[i].push([T,v]));}
+  return res;}
+
+/* ================= State & inputs ================= */
+const $=id=>document.getElementById(id);
+const st={drugA:'propofol',drugB:'propofol',ageA:40,ageB:80,d1:50,d2:80,wt:70,ht:170,male:true,ymax:30};
+['drugA','drugB'].forEach(id=>{$(id).innerHTML=Object.entries(DRUGS).map(([k,d])=>`<option value="${k}">${d.name} (${d.model})</option>`).join('');});
+let data=null,sims={};
+function readInputs(){
+  st.drugA=$('drugA').value;st.drugB=$('drugB').value;
+  st.ageA=+$('ageA').value;st.ageB=+$('ageB').value;st.d1=+$('d1').value;st.d2=+$('d2').value;
+  if(st.d2<=st.d1){st.d2=Math.min(95,st.d1+5);$('d2').value=st.d2;}
+  st.wt=+$('wt').value;st.ht=+$('ht').value;st.male=$('sex').value==='m';
+  $('ageAv').textContent=st.ageA+' yr';$('ageBv').textContent=st.ageB+' yr';
+  $('d1v').textContent=st.d1+'%';$('d2v').textContent=st.d2+'%';
+  $('wtv').textContent=st.wt+' kg';$('htv').textContent=st.ht+' cm';
+  const ex=(drug,a)=>{const d=DRUGS[drug];if(!d.covs)return `${d.model} has no covariates; age has no effect`;
+    return (a<d.range[0]||a>d.range[1])?`Outside the model's study range (${d.range[0]}–${d.range[1]}); extrapolated`:'';};
+  $('ageAx').textContent=ex(st.drugA,st.ageA);$('ageBx').textContent=ex(st.drugB,st.ageB);
+  [...$('runP').options].forEach(o=>o.textContent=`${o.value}: ${DRUGS[st['drug'+o.value]].name}, ${st['age'+o.value]} yr`);
+}
+function pFor(w){return DRUGS[st['drug'+w]].f(st['age'+w],st.wt,st.ht,st.male);}
+function recompute(){
+  readInputs();
+  sims={A:makeSim(pFor('A')),B:makeSim(pFor('B'))};
+  data={A:curves(sims.A,[st.d1,st.d2]),B:curves(sims.B,[st.d1,st.d2])};
+  runMarks=[];drawDec();drawTable();buildRun();}
+let rt;
+['ageA','ageB','d1','d2','wt','ht'].forEach(id=>$(id).addEventListener('input',()=>{readInputs();clearTimeout(rt);rt=setTimeout(recompute,60);}));
+['sex','drugA','drugB'].forEach(id=>$(id).addEventListener('change',recompute));
+function setY(v){st.ymax=v;document.querySelectorAll('[data-ymax]').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.ymax===v));}
+document.querySelectorAll('[data-ymax]').forEach(b=>b.onclick=()=>{setY(+b.dataset.ymax);drawDec();});
+const PRESETS={age:['propofol',40,'propofol',80,30],opioids:['fentanyl',40,'remifentanil',40,300],alf:['alfentanil',40,'fentanyl',40,300],hyp:['propofol',40,'remifentanil',40,60]};
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{const[a,aa,bb,ba,y]=PRESETS[b.dataset.preset];
+  $('drugA').value=a;$('ageA').value=aa;$('drugB').value=bb;$('ageB').value=ba;$('d1').value=50;$('d2').value=80;setY(y);recompute();});
+
+/* ================= Decrement chart ================= */
+const NS='http://www.w3.org/2000/svg';
+const el=(tag,attrs,parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;};
+const D={l:56,r:20,t:16,b:50,w:640,h:400};
+let runMarks=[];
+const short=w=>`${DRUGS[st['drug'+w]].name} ${st['age'+w]}`;
+function drawDec(){
+  const svg=$('decSvg');svg.innerHTML='';
+  const pw=D.w-D.l-D.r,ph=D.h-D.t-D.b;
+  const X=T=>D.l+T/TMAX*pw,Y=v=>D.t+ph-(Math.min(v,st.ymax*1.04))/st.ymax*ph;
+  const clip=el('clipPath',{id:'pc'},el('defs',{},svg));el('rect',{x:D.l,y:D.t-2,width:pw,height:ph+2},clip);
+  const ystep=st.ymax/6;
+  for(let i=0;i<=6;i++){const y=Y(i*ystep);el('line',{x1:D.l,x2:D.l+pw,y1:y,y2:y,stroke:'var(--grid)'},svg);
+    el('text',{x:D.l-8,y:y+5,'text-anchor':'end','font-size':13},svg).textContent=Math.round(i*ystep);}
+  for(let T=0;T<=300;T+=60){const x=X(T);el('line',{x1:x,x2:x,y1:D.t,y2:D.t+ph,stroke:'var(--grid)'},svg);
+    el('text',{x,y:D.t+ph+20,'text-anchor':'middle','font-size':13},svg).textContent=T;}
+  el('line',{x1:D.l,x2:D.l+pw,y1:D.t+ph,y2:D.t+ph,stroke:'var(--muted)'},svg);
+  el('line',{x1:D.l,x2:D.l,y1:D.t,y2:D.t+ph,stroke:'var(--muted)'},svg);
+  el('text',{x:D.l+pw/2,y:D.h-6,'text-anchor':'middle','font-size':14,'font-weight':700},svg).textContent='Infusion duration (min)';
+  el('text',{x:16,y:D.t+ph/2,'text-anchor':'middle','font-size':14,'font-weight':700,transform:`rotate(-90 16 ${D.t+ph/2})`},svg).textContent='Effect-site decrement time (min)';
+  const g=el('g',{'clip-path':'url(#pc)'},svg);const labels=[];
+  [['A','var(--a)'],['B','var(--b)']].forEach(([k,col])=>{
+    data[k].forEach((pts,i)=>{
+      const valid=pts.filter(q=>q[1]!==null);if(!valid.length)return;
+      el('path',{d:valid.map((q,j)=>(j?'L':'M')+X(q[0]).toFixed(1)+' '+Y(q[1]).toFixed(1)).join(' '),fill:'none',stroke:col,'stroke-width':3,'stroke-dasharray':i?'7 5':'none','stroke-linecap':'round'},g);
+      const last=valid.filter(q=>q[1]<=st.ymax).pop()||valid[0];
+      labels.push({x:X(last[0]),y:Y(last[1]),txt:`${[st.d1,st.d2][i]}% · ${short(k)}`,col,top:last[0]<TMAX});});});
+  labels.sort((a,b)=>a.y-b.y);let lastY=-99;
+  labels.forEach(L=>{let x=Math.min(L.x,D.l+pw-4),y=L.top?Math.max(L.y-8,D.t+14):L.y-8;if(y-lastY<16)y=lastY+16;lastY=y;
+    const anchor=x>D.l+pw-170?'end':'start';const t=el('text',{x:anchor==='end'?x:x+6,y,'text-anchor':anchor,'font-size':13,'font-weight':700},svg);
+    t.textContent=L.txt;t.style.fill=L.col;t.style.paintOrder='stroke';t.style.stroke='var(--panel)';t.style.strokeWidth='4px';});
+  runMarks.forEach(m=>{if(m.v<=st.ymax)el('circle',{cx:X(m.T),cy:Y(m.v),r:6,fill:'var(--panel)',stroke:m.col,'stroke-width':3},svg);});
+  const cross=el('line',{y1:D.t,y2:D.t+ph,stroke:'var(--ink)','stroke-dasharray':'3 3',opacity:0},svg);
+  const hit=el('rect',{x:D.l,y:D.t,width:pw,height:ph,fill:'transparent'},svg);
+  const move=e=>{const pt=svg.createSVGPoint();const src=e.touches?e.touches[0]:e;pt.x=src.clientX;pt.y=src.clientY;const q=pt.matrixTransform(svg.getScreenCTM().inverse());
+    const T=Math.round(Math.max(0,Math.min(TMAX,(q.x-D.l)/pw*TMAX))/TSTEP)*TSTEP,idx=T/TSTEP;
+    cross.setAttribute('x1',X(T));cross.setAttribute('x2',X(T));cross.setAttribute('opacity',.6);
+    const f=v=>v===null?`>${DECAYMAX}`:v.toFixed(1);
+    $('decReadout').innerHTML=`After <b>${T} min</b>: A (${short('A')}) ${st.d1}% = <b>${f(data.A[0][idx][1])}</b>, ${st.d2}% = <b>${f(data.A[1][idx][1])}</b> min · B (${short('B')}) ${st.d1}% = <b>${f(data.B[0][idx][1])}</b>, ${st.d2}% = <b>${f(data.B[1][idx][1])}</b> min`;};
+  hit.addEventListener('mousemove',move);hit.addEventListener('touchmove',e=>{e.preventDefault();move(e);},{passive:false});hit.addEventListener('touchstart',move,{passive:true});
+  hit.addEventListener('mouseleave',()=>cross.setAttribute('opacity',0));
+}
+
+/* ================= Model table ================= */
+function drawTable(){
+  const rows=['A','B'].map(w=>{const p=sims[w].p,lam=eig3(p);return {w,p,lam};});
+  const f=(v,d=4)=>v.toFixed(d), hl=l=>{const m=Math.LN2/Math.abs(l);return m<120?m.toFixed(1)+' min':(m/60).toFixed(1)+' h';};
+  $('modelTbl').innerHTML=`<thead><tr><th>Patient</th><th>k10</th><th>k12</th><th>k21</th><th>k13</th><th>k31</th><th>ke0</th><th>λ₁ (t½)</th><th>λ₂ (t½)</th><th>λ₃ (t½)</th></tr></thead><tbody>`+
+    rows.map(r=>`<tr><td><span class="sw" style="display:inline-block;width:12px;height:3px;background:var(--${r.w.toLowerCase()});margin-right:6px;vertical-align:middle"></span>${r.w}: ${DRUGS[st['drug'+r.w]].name}, ${st['age'+r.w]} yr</td>
+      <td>${f(r.p.k10)}</td><td>${f(r.p.k12)}</td><td>${f(r.p.k21)}</td><td>${f(r.p.k13)}</td><td>${f(r.p.k31)}</td><td>${f(r.p.ke0,3)}</td>
+      ${r.lam.map(l=>`<td>${l.toFixed(4)} <span style="color:var(--muted)">(${hl(l)})</span></td>`).join('')}</tr>`).join('')+'</tbody>';
+}
+
+/* ================= Animation ================= */
+let run=null,anim=null,playing=false,simT=0,lastTs=0;
+function buildRun(){
+  stop();const P=$('runP').value,T=+$('runT').value,sim=sims[P],p=sim.p;
+  $('runTv').textContent=T+' min';
+  const traj=[];let y=[1,0,0,1],t=0;const rec=()=>traj.push({t,c1:y[0],x2:y[1],x3:y[2],ce:y[3]});rec();
+  while(t<T-1e-9){y=apply(sim.Minf,y);t+=H;rec();}
+  const g1=1-st.d1/100,g2=1-st.d2/100;let hit1=null,hit2=null,extra=0;
+  while(t<T+DECAYMAX){y=apply(sim.Moff,y);t+=H;rec();
+    if(hit1===null&&y[3]<=g1)hit1=t-T;if(hit2===null&&y[3]<=g2)hit2=t-T;
+    if(hit2!==null){extra+=H;if(extra>Math.max(5,hit2*0.15))break;}}
+  run={P,T,p,traj,hit1,hit2,end:t,col:P==='A'?'var(--a)':'var(--b)'};
+  simT=0;drawTanks(traj[0]);drawRunChart();updateClock();$('runReadout').innerHTML='&nbsp;';}
+$('runP').onchange=buildRun;$('runT').oninput=()=>{$('runTv').textContent=$('runT').value+' min';clearTimeout(rt);rt=setTimeout(buildRun,80);};
+const stateAt=t=>run.traj[Math.min(run.traj.length-1,Math.round(t/H))];
+function stop(){playing=false;cancelAnimationFrame(anim);$('play').textContent='Play';}
+$('play').onclick=()=>{if(playing){stop();return;}if(simT>=run.end-1e-6)simT=0;playing=true;$('play').textContent='Pause';lastTs=0;anim=requestAnimationFrame(tick);};
+$('reset').onclick=()=>{stop();simT=0;drawTanks(run.traj[0]);drawRunChart();updateClock();$('runReadout').innerHTML='&nbsp;';};
+$('skip').onclick=()=>{stop();simT=run.end;frame();};
+function tick(ts){if(!lastTs)lastTs=ts;const dt=(ts-lastTs)/1000;lastTs=ts;
+  simT=Math.min(run.end,simT+dt*(+$('speed').value)*(simT>run.T?0.5:1));frame();
+  if(simT<run.end&&playing)anim=requestAnimationFrame(tick);else stop();}
+function frame(){
+  const s=stateAt(simT);drawTanks(s);drawRunChart(simT);updateClock();
+  const since=simT-run.T;let msg='';
+  if(run.hit1!==null&&since>=run.hit1)msg+=`${st.d1}% decrement reached at <b>${run.hit1.toFixed(1)} min</b>. `;
+  if(run.hit2!==null&&since>=run.hit2){msg+=`${st.d2}% decrement reached at <b>${run.hit2.toFixed(1)} min</b>.`;
+    const add=v=>{if(v!==null&&!runMarks.some(m=>m.T===run.T&&Math.abs(m.v-v)<0.01&&m.col===run.col))runMarks.push({T:run.T,v,col:run.col});};
+    add(run.hit1);add(run.hit2);if(runMarks.length>12)runMarks=runMarks.slice(-12);drawDec();}
+  $('runReadout').innerHTML=msg||'&nbsp;';}
+function updateClock(){
+  const inf=simT<=run.T;
+  $('phase').textContent=simT===0?'Ready':inf?'Infusing':(run.hit2!==null&&simT-run.T>=run.hit2?'Done':'Stopped');
+  $('clkInf').textContent=Math.min(simT,run.T).toFixed(0)+' min';
+  $('clkOff').textContent=inf?'–':(simT-run.T).toFixed(1)+' min';}
+function drawTanks(s){
+  const svg=$('tankSvg');svg.innerHTML='';const p=run.p;
+  const c2=s.x2*p.V1/p.V2,c3=s.x3*p.V1/p.V3,base=200;
+  [{k:'v2',x:20,w:110,c:c2,col:'var(--v2)',n:'V2 rapid',v:p.V2},{k:'v1',x:200,w:70,c:s.c1,col:'var(--v1)',n:'V1 central',v:p.V1},{k:'v3',x:340,w:160,c:c3,col:'var(--v3)',n:'V3 slow',v:p.V3}].forEach(T=>{
+    const g=el('g',{style:'cursor:pointer',tabindex:0,role:'button','aria-label':T.n},svg);
+    el('rect',{x:T.x,y:base-120,width:T.w,height:120,rx:8,fill:'var(--soft)',stroke:'var(--line)','stroke-width':2},g);
+    const fh=Math.max(0,Math.min(1,T.c))*120;
+    el('rect',{x:T.x+2,y:base-fh,width:T.w-4,height:Math.max(0,fh-2),rx:6,fill:T.col,opacity:.85},g);
+    el('text',{x:T.x+T.w/2,y:base+20,'text-anchor':'middle','font-size':14,'font-weight':700},g).textContent=T.n;
+    el('text',{x:T.x+T.w/2,y:base+38,'text-anchor':'middle','font-size':12,fill:'var(--muted)'},g).textContent=`${T.v.toFixed(1)} L · ${(T.c*100).toFixed(0)}%`;
+    g.onclick=()=>showC(T.k);g.onkeydown=e=>{if(e.key==='Enter')showC(T.k)};});
+  const eg=el('g',{style:'cursor:pointer',tabindex:0,role:'button','aria-label':'Effect site'},svg);
+  el('circle',{cx:235,cy:38,r:24,fill:'var(--soft)',stroke:'var(--line)','stroke-width':2},eg);
+  el('circle',{cx:235,cy:38,r:Math.max(0,Math.min(1,s.ce))*22,fill:'var(--ve)',opacity:.85},eg);
+  el('text',{x:268,y:34,'font-size':14,'font-weight':700},eg).textContent='Effect site';
+  el('text',{x:268,y:52,'font-size':12,fill:'var(--muted)'},eg).textContent=`Ce ${(s.ce*100).toFixed(0)}%`;
+  eg.onclick=()=>showC('effect');
+  const arrow=(x1,x2,y,flux,scale)=>{const mag=Math.min(1,Math.abs(flux)*scale);
+    if(mag<0.02){el('line',{x1,x2,y1:y,y2:y,stroke:'var(--line)','stroke-width':2},svg);return;}
+    const dir=flux>0?1:-1,[a,b]=dir>0?[x1,x2]:[x2,x1];
+    el('line',{x1:a,x2:b-dir*8,y1:y,y2:y,stroke:'var(--ink)','stroke-width':1.5+mag*4,opacity:.35+mag*.6},svg);
+    el('path',{d:`M${b} ${y} l${-dir*12} -7 l0 14 z`,fill:'var(--ink)',opacity:.35+mag*.6},svg);};
+  const f12=p.k12*s.c1-p.k21*s.x2,f13=p.k13*s.c1-p.k31*s.x3;
+  arrow(132,198,140,-f12,1.6); // arrowhead points toward the compartment gaining drug
+  arrow(272,338,140,f13,2.5);
+  el('line',{x1:235,x2:235,y1:64,y2:78,stroke:'var(--muted)','stroke-dasharray':'3 3'},svg);
+  if(simT<=run.T){el('line',{x1:212,x2:212,y1:58,y2:76,stroke:'var(--v1)','stroke-width':3},svg);
+    el('text',{x:204,y:70,'text-anchor':'end','font-size':12,fill:'var(--v1)'},svg).textContent='Infusion on';}
+  else el('text',{x:204,y:70,'text-anchor':'end','font-size':12,fill:'var(--muted)'},svg).textContent='Infusion off';
+  const em=Math.min(1,p.k10*s.c1*2);
+  el('line',{x1:272,x2:312,y1:180,y2:236,stroke:'var(--ink)','stroke-width':1.5+em*3,opacity:.35+em*.6},svg);
+  el('path',{d:'M318 245 l-12 -4 l8 -7 z',fill:'var(--ink)',opacity:.6},svg);
+  el('text',{x:322,y:252,'font-size':12,fill:'var(--muted)'},svg).textContent='Elimination';
+  el('text',{x:20,y:272,'font-size':12,fill:'var(--muted)'},svg).textContent='Fill = concentration as % of target';}
+function drawRunChart(upto){
+  const svg=$('runSvg');svg.innerHTML='';
+  const L=48,R=12,Tp=12,B=36,W=520,Hh=220,pw=W-L-R,ph=Hh-Tp-B,end=run.end,X=t=>L+t/end*pw,Y=v=>Tp+ph-v*ph;
+  [0,.25,.5,.75,1].forEach(v=>{el('line',{x1:L,x2:L+pw,y1:Y(v),y2:Y(v),stroke:'var(--grid)'},svg);el('text',{x:L-6,y:Y(v)+4,'text-anchor':'end','font-size':11},svg).textContent=(v*100)+'%';});
+  el('rect',{x:L,y:Tp,width:X(run.T)-L,height:ph,fill:'var(--soft)'},svg);
+  el('text',{x:L+6,y:Tp+14,'font-size':11,fill:'var(--muted)'},svg).textContent='infusion';
+  const tickStep=end>900?240:end>480?120:end>240?60:end>100?30:10;
+  for(let t=0;t<=end;t+=tickStep)el('text',{x:X(t),y:Hh-18,'text-anchor':'middle','font-size':11},svg).textContent=t;
+  el('text',{x:L+pw/2,y:Hh-2,'text-anchor':'middle','font-size':12,'font-weight':700},svg).textContent='Time (min)';
+  [st.d1,st.d2].forEach(d=>{const g=1-d/100;
+    el('line',{x1:X(run.T),x2:L+pw,y1:Y(g),y2:Y(g),stroke:'var(--ve)','stroke-dasharray':'4 4',opacity:.6},svg);
+    el('text',{x:X(run.T)+6,y:Y(g)-4,'font-size':11,fill:'var(--ve)'},svg).textContent=`${d}% fall`;});
+  const lim=upto===undefined?0:upto,stride=Math.max(1,Math.round(run.traj.length/600)),pts=run.traj.filter((q,i)=>i%stride===0&&q.t<=lim);
+  if(pts.length>1){
+    el('path',{d:pts.map((q,j)=>(j?'L':'M')+X(q.t).toFixed(1)+' '+Y(Math.min(1.05,q.c1)).toFixed(1)).join(' '),fill:'none',stroke:'var(--cp)','stroke-width':2},svg);
+    el('path',{d:pts.map((q,j)=>(j?'L':'M')+X(q.t).toFixed(1)+' '+Y(q.ce).toFixed(1)).join(' '),fill:'none',stroke:'var(--ve)','stroke-width':3},svg);}
+  [run.hit1,run.hit2].forEach((h,i)=>{if(h!==null&&lim-run.T>=h)el('circle',{cx:X(run.T+h),cy:Y(1-[st.d1,st.d2][i]/100),r:5,fill:'var(--panel)',stroke:'var(--ve)','stroke-width':2.5},svg);});
+  el('text',{x:L+pw-2,y:Tp+14,'text-anchor':'end','font-size':11,fill:'var(--cp)'},svg).textContent='plasma';
+  el('text',{x:L+pw-2,y:Tp+28,'text-anchor':'end','font-size':11,fill:'var(--ve)'},svg).textContent='effect site';}
+recompute();
+</script>
+</body>
+</html>
