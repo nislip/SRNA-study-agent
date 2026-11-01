@@ -28,7 +28,7 @@ Generated monthly from DailyMed. Open `references/<file>` for the drug you need.
 | morphine-iv | morphine-iv.md | morphine, Duramorph | MORPHINE SULFATE INJECTION, SOLUTION [FRESENIUS KABI, USA LLC] | 8 | Sep 10, 2026 |
 | naloxone-iv | naloxone-iv.md | Narcan | NALOXONE HYDROCHLORIDE INJECTION [DR. REDDY'S LABORATORIES, INC.] | 9 | Sep 07, 2026 |
 | neostigmine | neostigmine.md | Bloxiverz | NEOSTIGMINE METHYLSULFATE INJECTION [GLAND PHARMA LIMITED] | 6 | Sep 23, 2026 |
-| ondansetron-iv | ondansetron-iv.md | Zofran | ONDANSETRON INJECTION [HENRY SCHEIN, INC.] | 8 | Jul 28, 2026 |
+| ondansetron-iv | ondansetron-iv.md | Zofran | ONDANSETRON INJECTION [HENRY SCHEIN, INC.] | 9 | Oct 21, 2026 |
 | phenylephrine-iv | phenylephrine-iv.md | neo, Neo-Synephrine | PHENYLEPHRINE HYDROCHLORIDE INJECTION IMMPHENTIV (PHENYLEPHRINE HYDROCHLORIDE) INJECTION IMMPHENTIV (PHENYLEPHRINE HYDROCHLORIDE) INJECTABLE, LIPOSOMAL [HIKMA PHARMACEUTICALS USA INC.] | 13 | Aug 20, 2026 |
 | propofol | propofol.md | Diprivan | PROPOFOL INJECTION, EMULSION [ANTHEA PHARMA PRIVATE LIMITED] | 6 | Sep 30, 2026 |
 | remifentanil | remifentanil.md | Ultiva | ULTIVA (REMIFENTANIL HYDROCHLORIDE) INJECTION, POWDER, LYOPHILIZED, FOR SOLUTION [MYLAN INSTITUTIONAL LLC] | 5 | Aug 20, 2026 |

@@ -3,8 +3,8 @@ drug: ondansetron-iv
 aliases: Zofran
 label: ONDANSETRON INJECTION [HENRY SCHEIN, INC.]
 setid: 1a44601b-c31c-4779-a688-28cc4cc75e8b
-spl_version: 8
-published: Jul 28, 2026
+spl_version: 9
+published: Oct 21, 2026
 source: https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a44601b-c31c-4779-a688-28cc4cc75e8b
 ---
 
@@ -73,7 +73,31 @@ In patients with severe hepatic impairment (Child-Pugh score of 10 or greater), 
 
 ## 3 DOSAGE FORMS AND STRENGTHS
 
-Ondansetron Injection, USP: 4 mg/2 mL clear, colorless, nonpyrogenic, sterile solution in a single-use vial.
+Ondansetron Injection, USP: 4 mg/2 mL clear, colorless, nonpyrogenic, sterile solution in a single-dose vial.
+
+## 11 DESCRIPTION
+
+The active ingredient of Ondansetron Injection, USP is ondansetron hydrochloride, a selective blocking agent of the serotonin 5-HT3 receptor type. Its chemical name is (±) 1, 2, 3, 9-tetrahydro-9-methyl-3-[(2-methyl-1H-imidazol-1-yl)methyl]-4H-carbazol-4-one, monohydrochloride, dihydrate. It has the following structural formula:
+
+[figure omitted]
+
+The empirical formula is C18H19N3O•HCl•2H2O, representing a molecular weight of 365.9.
+
+Ondansetron HCl is a white to off-white powder that is soluble in water and normal saline.
+
+Each 1 mL of aqueous solution in the 2-mL single-use vial contains 2 mg of ondansetron as the hydrochloride dihydrate; 9.0 mg of sodium chloride, USP; 0.5 mg of citric acid monohydrate, USP and 0.25 mg of sodium citrate dihydrate, USP as buffers in Water for Injection.
+
+Ondansetron Injection, USP is a clear, colorless, nonpyrogenic, sterile solution for intravenous use. The pH of the injection solution is 3.3 to 4.0.
+
+## Ingredients and Composition
+
+_From DailyMed's structured product data. Strength is per the stated volume or unit._
+
+| product | form | route | active ingredient (strength) |
+|---|---|---|---|
+| ONDANSETRON | Injection | Intramuscular, Intravenous | ONDANSETRON HYDROCHLORIDE (2 mg in 1 mL) [UNII NMH84OZK2B] |
+
+**Inactive ingredients:** SODIUM CHLORIDE; CITRIC ACID MONOHYDRATE; TRISODIUM CITRATE DIHYDRATE; WATER
 
 ## ﻿4 CONTRAINDICATIONS
 
@@ -85,15 +109,15 @@ The concomitant use of apomorphine with ondansetron is contraindicated based on 
 
 5.1 Hypersensitivity Reactions
 
-Hypersensitivity reactions, including anaphylaxis and bronchospasm, have been reported in patients who have exhibited hypersensitivity to other selective 5-HT_3 receptor antagonists.
+Hypersensitivity reactions, including anaphylaxis and bronchospasm, have been reported in patients who have exhibited hypersensitivity to other selective 5-HT3 receptor antagonists.
 
 5.2 QT Prolongation
 
-Ondansetron prolongs the QT interval in a dose-dependent manner [see Clinical Pharmacology (12.2)]. In addition, postmarketing cases of Torsade de Pointes have been reported in patients using ondansetron. Avoid Ondansetron Injection in patients with congenital long QT syndrome. ECG monitoring is recommended in patients with electrolyte abnormalities (e.g., hypokalemia or hypomagnesemia), congestive heart failure, bradyarrhythmias, or patients taking other medicinal products that lead to QT prolongation.
+Ondansetron prolongs the QT interval in a dose-dependent manner [see Clinical Pharmacology (12.2)]. In addition, postmarketing cases of Torsade de Pointes have been reported in patients using ondansetron. Avoid Ondansetron Injection in patients with congenital long QT syndrome. Electrocardiogram (ECG) monitoring is recommended in patients with electrolyte abnormalities (e.g., hypokalemia or hypomagnesemia), congestive heart failure, bradyarrhythmias, or patients taking other medicinal products that lead to QT prolongation.
 
 5.3 Serotonin Syndrome
 
-The development of serotonin syndrome has been reported with 5-HT_3 receptor antagonists. Most reports have been associated with concomitant use of serotonergic drugs (e.g., selective serotonin reuptake inhibitors (SSRIs), serotonin and norepinephrine reuptake inhibitors (SNRIs), monoamine oxidase inhibitors, mirtazapine, fentanyl, lithium, tramadol, and intravenous methylene blue). Some of the reported cases were fatal. Serotonin syndrome occurring with overdose of Ondansetron Injection alone has also been reported. The majority of reports of serotonin syndrome related to 5-HT3 receptor antagonist use occurred in a post-anesthesia care unit or an infusion center.
+The development of serotonin syndrome has been reported with 5-HT3 receptor antagonists. Most reports have been associated with concomitant use of serotonergic drugs (e.g., selective serotonin reuptake inhibitors (SSRIs), serotonin and norepinephrine reuptake inhibitors (SNRIs), monoamine oxidase inhibitors, mirtazapine, fentanyl, lithium, tramadol, and intravenous methylene blue). Some of the reported cases were fatal. Serotonin syndrome occurring with overdose of Ondansetron Injection alone has also been reported. The majority of reports of serotonin syndrome related to 5-HT3 receptor antagonist use occurred in a post-anesthesia care unit or an infusion center.
 
 Symptoms associated with serotonin syndrome may include the following combination of signs and symptoms: mental status changes (e.g., agitation, hallucinations, delirium, and coma), autonomic instability (e.g., tachycardia, labile blood pressure, dizziness, diaphoresis, flushing, hyperthermia), neuromuscular symptoms (e.g., tremor, rigidity, myoclonus, hyperreflexia, incoordination), seizures, with or without gastrointestinal symptoms (e.g., nausea, vomiting, diarrhea). Patients should be monitored for the emergence of serotonin syndrome, especially with concomitant use of Ondansetron Injection and other serotonergic drugs. If symptoms of serotonin syndrome occur, discontinue Ondansetron Injection and initiate supportive treatment. Patients should be informed of the increased risk of serotonin syndrome, especially if Ondansetron Injection is used concomitantly with other serotonergic drugs [see Drug Interactions (7.5), Overdosage (10)].
 
@@ -113,7 +137,7 @@ Ondansetron Injection is not a drug that stimulates gastric or intestinal perist
 
 Risk Summary
 
-Published epidemiological studies on the association between ondansetron use and major birth defects have reported inconsistent findings and have important methodological limitations that preclude conclusions about the safety of ondansetron use in pregnancy (see Data). Available postmarketing data have not identified a drug-associated risk of miscarriage or adverse maternal outcomes. Reproductive studies in rats and rabbits did not show evidence of harm to the fetus when ondansetron was administered intravenously during organogenesis at approximately 3.6 and 2.9 times the maximum recommended human intravenous dose of 0.15 mg/kg given three times a day, based on body surface area (BSA), respectively (see Data).
+Published epidemiological studies on the association between ondansetron use and major birth defects have reported inconsistent findings and have important methodological limitations that preclude conclusions about the safety of ondansetron use in pregnancy (see Data) . Available postmarketing data have not identified a drug-associated risk of miscarriage or adverse maternal outcomes. Reproductive studies in rats and rabbits did not show evidence of harm to the fetus when ondansetron was administered intravenously during organogenesis at approximately 3.6 and 2.9 times the maximum recommended human intravenous dose of 0.15 mg/kg given three times a day, based on body surface area (BSA), respectively (see Data).
 
 The background risk of major birth defects and miscarriage for the indicated population is unknown. All pregnancies have a background risk of birth defect, miscarriages, or other adverse outcomes. In the US general population, the estimated background risk of major birth defects and miscarriages in clinically recognized pregnancies is 2% to 4% and 15% to 20%, respectively.
 
@@ -171,13 +195,13 @@ Pediatric cases consistent with serotonin syndrome have been reported after inad
 
 ## 12 CLINICAL PHARMACOLOGY
 
-_ 12.1 Mechanism of Action
+12.1 Mechanism of Action
 
 Ondansetron is a selective 5-HT3 receptor antagonist. While ondansetron’s mechanism of action has not been fully characterized, it is not a dopamine-receptor antagonist.
 
 12.2 Pharmacodynamics
 
-In normal volunteers, single intravenous doses of 0.15 mg/kg of ondansetron had no effect on esophageal motility, gastric motility, lower esophageal sphincter pressure, or small intestinal transit time. In another trial in six normal male volunteers, a 16 mg dose infused over 5 minutes showed no effect of the drug on cardiac output, heart rate, stroke volume, blood pressure, or electrocardiogram (ECG). Multiday administration of ondansetron has been shown to slow colonic transit in normal volunteers. Ondansetron has no effect on plasma prolactin concentrations. In a gender balanced pharmacodynamic trial (n = 56), ondansetron 4 mg administered intravenously or intramuscularly was dynamically similar in the prevention of nausea and vomiting using the ipecacuanha model of emesis.
+In normal volunteers, single intravenous doses of 0.15 mg/kg of ondansetron had no effect on esophageal motility, gastric motility, lower esophageal sphincter pressure, or small intestinal transit time. In another trial in six normal male volunteers, a 16 mg dose infused over 5 minutes showed no effect of the drug on cardiac output, heart rate, stroke volume, blood pressure, or (ECG). Multiday administration of ondansetron has been shown to slow colonic transit in normal volunteers. Ondansetron has no effect on plasma prolactin concentrations. In a gender balanced pharmacodynamic trial (n = 56), ondansetron 4 mg administered intravenously or intramuscularly was dynamically similar in the prevention of nausea and vomiting using the ipecacuanha model of emesis.
 
 Cardiac Electrophysiology
 
@@ -191,7 +215,7 @@ In normal adult volunteers, the following mean pharmacokinetic data have been de
 
 Absorption
 
-A trial was performed in normal volunteers (n = 56) to evaluate the pharmacokinetics of a single 4-mg dose administered as a 5-minute infusion compared with a single intramuscular injection. Systemic exposure as measured by mean AUC were equivalent, with values of 156 [95% CI: 136, 180] and 161 [95% CI: 137, 190] ng•h/mL for intravenous and intramuscular groups, respectively. Mean peak plasma concentrations were 42.9 [95% CI: 33.8, 54.4] ng/mL at 10 minutes after intravenous infusion and 31.9 [95% CI: 26.3, 38.6] ng/mL at 41 minutes after intramuscular injection.
+A trial was performed in normal volunteers (n = 56) to evaluate the pharmacokinetics of a single 4-mg dose administered as a 5-minute infusion compared with a single intramuscular injection. Systemic exposure as measured by mean (AUC) were equivalent, with values of 156 [95% CI: 136, 180] and 161 [95% CI: 137, 190] ng•h/mL for intravenous and intramuscular groups, respectively. Mean peak plasma concentrations were 42.9 [95% CI: 33.8, 54.4] ng/mL at 10 minutes after intravenous infusion and 31.9 [95% CI: 26.3, 38.6] ng/mL at 41 minutes after intramuscular injection.
 
 Distribution
 
@@ -219,7 +243,7 @@ Pediatric Patients : Pharmacokinetic samples were collected from 74 cancer patie
 
 Based on the population pharmacokinetic analysis, cancer patients aged 6 to 48 months who receive a dose of 0.15 mg/kg of intravenous ondansetron every 4 hours for 3 doses would be expected to achieve a systemic exposure (AUC) consistent with the exposure achieved in previous pediatric trials in cancer patients (4 to 18 years) at similar doses.
 
-In a trial of 21 pediatric patients (3 to 12 years) who were undergoing surgery requiring anesthesia for a duration of 45 minutes to 2 hours, a single intravenous dose of ondansetron, 2 mg (3 to 7 years) or 4 mg (8 to 12 years), was administered immediately prior to anesthesia induction. Mean weight‑normalized clearance and volume of distribution values in these pediatric surgical patients were similar to those previously reported for young adults. Mean terminal half‑life was slightly reduced in pediatric patients (range: 2.5 to 3 hours) in comparison with adults (range: 3 to 3.5 hours).
+In a trial of 21 pediatric patients (3 to 12 years) who were undergoing surgery requiring anesthesia for a duration of 45 minutes to 2 hours, a single intravenous dose of ondansetron, 2 mg (3 to 7 years) or 4 mg (8 to 12 years), was administered immediately prior to anesthesia induction. Mean weight‑normalized clearance and volume of distribution values in these pediatric surgical patients were similar to those previously reported for young adults. Mean terminal half‑life was slightly reduced in pediatric patients (range, 2.5 to 3 hours) in comparison with adults (range, 3 to 3.5 hours).
 
 In a trial of 51 pediatric patients (aged 1 month to 24 months) who were undergoing surgery requiring general anesthesia, a single intravenous dose of ondansetron, 0.1 or 0.2 mg/kg, was administered prior to surgery. As shown in Table 6, the 41 patients with pharmacokinetic data were divided into 2 groups, patients aged 1 month to 4 months and patients aged 5 to 24 months, and are compared with pediatric patients aged 3 to 12 years.
 
@@ -235,7 +259,7 @@ Patients with Hepatic Impairment : In patients with mild‑to‑moderate hepatic
 
 Drug Interaction Studies
 
-CYP 3A4 Inducers : Ondansetron elimination may be affected by cytochrome P-450 inducers. In a pharmacokinetic trial of 16 epileptic patients maintained chronically on CYP3A4 inducers, carbamazepine, or phenytoin, a reduction in AUC, C_max, and t_½ of ondansetron was observed. This resulted in a significant increase in the clearance of ondansetron. In a pharmacokinetic study of 10 healthy subjects receiving a single-dose intravenous dose of ondansetron 8 mg after 600 mg rifampin once daily for five days, the AUC and the t_½ of ondansetron were reduced by 48% and 46%, respectively. These changes in ondansetron exposure with CYP3A4 inducers are not thought to be clinically relevant [see Drug Interactions (7.3)].
+CYP 3A4 Inducers : Ondansetron elimination may be affected by cytochrome P-450 inducers. In a pharmacokinetic trial of 16 epileptic patients maintained chronically on CYP3A4 inducers, carbamazepine, or phenytoin, a reduction in AUC, Cmax, and t½ of ondansetron was observed. This resulted in a significant increase in the clearance of ondansetron. In a pharmacokinetic study of 10 healthy subjects receiving a single-dose intravenous dose of ondansetron 8 mg after 600 mg rifampin once daily for five days, the AUC and the t½ of ondansetron were reduced by 48% and 46%, respectively. These changes in ondansetron exposure with CYP3A4 inducers are not thought to be clinically relevant [see Drug Interactions (7.3)].
 
 Chemotherapeutic Agents: Carmustine, etoposide, and cisplatin do not affect the pharmacokinetics of ondansetron [see Drug Interactions (7.6)].
 
